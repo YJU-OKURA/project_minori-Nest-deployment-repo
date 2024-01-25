@@ -8,15 +8,6 @@ assignees: ''
 ---
 
 ---
-name: issue-template
-about: チームオクラの基本テンプレート
-title: ''
-labels: "⚙ Setting"
-assignees: yuminn-k
-
----
-
----
 name: Issue Template
 about: Issueテンプレート
 title: ''
