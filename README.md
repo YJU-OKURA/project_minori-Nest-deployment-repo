@@ -1,1 +1,1 @@
-# project_minori-LLM-deployment-repo
+# project_minori-RAG-deployment-repo
