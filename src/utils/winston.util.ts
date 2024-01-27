@@ -5,7 +5,6 @@ import * as winston from 'winston';
 const env = process.env.NODE_ENV;
 const logDir = process.env.LOG_DIR || __dirname + '/../../logs';
 const project = process.env.PROJECT_NAME || 'minori-rag-application';
-console.log(env, logDir, project, process.env);
 
 const dailyOptions = (level: string) => {
   return {
@@ -27,6 +26,7 @@ export const winstonLogger = WinstonModule.createLogger({
           ? winston.format.simple()
           : winston.format.combine(
               winston.format.timestamp(),
+              winston.format.colorize(),
               utilities.format.nestLike(project, {
                 prettyPrint: true,
               }),
