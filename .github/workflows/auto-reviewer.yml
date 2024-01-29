@@ -1,18 +1,11 @@
 name: Auto Reviewer
 on:
-  issues:
-    types: [opened]
-  pull_request:
-    types: [opened]
+  pull_request_target:
+    types: [opened, ready_for_review]
 jobs:
-  run:
+  add-reviews:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: write
     steps:
-    - name: 'Add Reviewer'
-      uses: kentaro-m/auto-assign-action@v1
-      with:
-          repo-token: ${{ secrets.OG_TOKEN }}
-          reviewers: OKURA/OKURA_BE
+      - uses: kentaro-m/auto-assign-action@v1.2.6
+        with:
+          configuration-path: '.github/auto_be_reviewer.yml'
