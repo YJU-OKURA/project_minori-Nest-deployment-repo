@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 
 export const winstonLogger = (app: INestApplication) => {
   const configService = app.get(ConfigService);
-  const logDir = configService.get<string>('LOG_DIR', 'minori-rag-application');
+  const logDir = configService.get<string>('LOG_DIR', '/../../logs');
   const project = configService.get<string>('PROJECT_NAME', 'minori-rag-application');
   const env = configService.get<string>('NODE_ENV', 'development');
 
