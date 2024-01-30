@@ -21,25 +21,27 @@ export const winstonLogger = (app: INestApplication) => {
     };
   };
 
-  return WinstonModule.createLogger({
-    transports: [
-      new winston.transports.Console({
-        level: env === 'production' ? 'http' : 'silly',
-        format:
-          env === 'production'
-            ? winston.format.simple()
-            : winston.format.combine(
-                winston.format.timestamp(),
-                winston.format.colorize(),
-                utilities.format.nestLike(project, {
-                  prettyPrint: true,
-                }),
-              ),
-      }),
+  app.useLogger(
+    WinstonModule.createLogger({
+      transports: [
+        new winston.transports.Console({
+          level: env === 'production' ? 'http' : 'silly',
+          format:
+            env === 'production'
+              ? winston.format.simple()
+              : winston.format.combine(
+                  winston.format.timestamp(),
+                  winston.format.colorize(),
+                  utilities.format.nestLike(project, {
+                    prettyPrint: true,
+                  }),
+                ),
+        }),
 
-      new winstonDaily(dailyOptions('info')),
-      new winstonDaily(dailyOptions('warn')),
-      new winstonDaily(dailyOptions('error')),
-    ],
-  });
+        new winstonDaily(dailyOptions('info')),
+        new winstonDaily(dailyOptions('warn')),
+        new winstonDaily(dailyOptions('error')),
+      ],
+    }),
+  );
 };

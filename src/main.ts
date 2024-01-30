@@ -6,8 +6,7 @@ import { swagger } from './utils/swagger.util';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useLogger(winstonLogger(app));
-
+  winstonLogger(app);
   swagger(app);
 
   await app.listen(process.env.PORT || 3000, '0.0.0.0');
