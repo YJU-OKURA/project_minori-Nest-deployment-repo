@@ -3,12 +3,17 @@ import * as winstonDaily from 'winston-daily-rotate-file';
 import * as winston from 'winston';
 import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { WinstonConfig } from 'src/common/configs/config.interface';
 
 export const winstonLogger = (app: INestApplication) => {
   const configService = app.get(ConfigService);
-  const logDir = configService.get<string>('LOG_DIR', '/../../logs');
-  const project = configService.get<string>('PROJECT_NAME', 'minori-rag-application');
-  const env = configService.get<string>('NODE_ENV', 'development');
+  const winstonConfig =
+    configService.get<WinstonConfig>('winston');
+
+  const logDir = winstonConfig.logDir || 'logs';
+  const project =
+    winstonConfig.project || 'minori-rag-application';
+  const env = winstonConfig.env || 'development';
 
   const dailyOptions = (level: string) => {
     return {
