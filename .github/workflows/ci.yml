@@ -20,9 +20,11 @@ jobs:
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
+        env:
+          DOCKER_PASSWORD: ${{secrets.DOCKERHUB_PASSWORD}}
         with:
           username: z00one
-          password: ${{secrets.DOCKERHUB_PASSWORD}}
+          password: ${{env.DOCKER_PASSWORD}}
 
       - name: Build the Docker image
         run: docker build -t minori-rag-app .
