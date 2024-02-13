@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: check secrets
-        run: echo ${{secrets.DOCKERHUB_PASSWORD}}
+        run: gh secret list
       - name: check env
         run: echo ${{env.DOCKERHUB_PASSWORD}}
       - name: Login to Docker Hub
