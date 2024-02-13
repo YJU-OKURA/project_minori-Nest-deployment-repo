@@ -1,6 +1,8 @@
 name: Docker Image CI
 
 on:
+  push:
+    branches: ['main']
   pull_request:
     branches: ['main']
 
@@ -9,17 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Login to Docker Hub
         uses: docker/login-action@v3.0.0
         with:
           username: z00one
           password: ${{secrets.DOCKERHUB_PASSWORD}}
-
-      - name: Build the Docker image
-        run: docker build -t minori-rag-app .
-      - name: Taging
-        run: docker tag minori-rag-app:latest z00one/minori-rag-app:latest
-      - name: Push to Dockerhub
-        run: docker push z00one/minori-rag-app:latest
