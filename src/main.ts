@@ -4,10 +4,9 @@ import { winstonLogger } from './utils/winston.util';
 import { swagger } from './utils/swagger.util';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: winstonLogger,
-  });
+  const app = await NestFactory.create(AppModule);
 
+  winstonLogger(app);
   swagger(app);
 
   await app.listen(process.env.PORT || 3000, '0.0.0.0');
