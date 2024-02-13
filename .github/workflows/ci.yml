@@ -10,9 +10,9 @@ jobs:
 
     steps:
       - name: check secrets
-        run: echo {{secrets}}
+        run: echo ${{secrets}}
       - name: check env
-        run: echo {{env}}
+        run: echo ${{env}}
       - name: Login to Docker Hub
         uses: docker/login-action@v3.0.0
         with:
