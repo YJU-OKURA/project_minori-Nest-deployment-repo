@@ -35,4 +35,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # environment
-**/configs/*
+.env
+
+# git
+.gitmessage.txt

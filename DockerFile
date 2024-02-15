@@ -13,8 +13,14 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+# Run Prisma command
+RUN npx prisma generate
+
 # Creates a "dist" folder with the production build
 RUN npm run build
+
+# Set environment variable for Prisma
+ENV DATABASE_URL="DATABASE_URL"
 
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]
