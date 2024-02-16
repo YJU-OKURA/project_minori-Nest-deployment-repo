@@ -54,7 +54,7 @@ model Feedbacks {
   created_at  DateTime?     @default(now())
   m_id        BigInt
 
-  material    Materials     @relation(fields: [m_id], references: [id])
+  material    Materials     @relation(fields: [m_id], references: [id], onDelete: Cascade)
 }
 
 model Prompts {
@@ -64,7 +64,7 @@ model Prompts {
   messages    Messages[]
 
   m_id        BigInt
-  material    Materials     @relation(fields: [m_id], references: [id])
+  material    Materials     @relation(fields: [m_id], references: [id], onDelete: Cascade)
 
   u_id        BigInt
   c_id        BigInt
@@ -79,7 +79,7 @@ model Messages {
   is_save     Boolean       @default(false)
   
   p_id        BigInt
-  prompt      Prompts       @relation(fields: [p_id], references: [id])
+  prompt      Prompts       @relation(fields: [p_id], references: [id], onDelete: Cascade)
 }
 
 model Quizs {
@@ -87,5 +87,5 @@ model Quizs {
   content     Json
 
   m_id        BigInt
-  material    Materials     @relation(fields: [m_id], references: [id])
+  material    Materials     @relation(fields: [m_id], references: [id], onDelete: Cascade)
 }
