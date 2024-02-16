@@ -43,9 +43,9 @@ model Materials {
   prompts     Prompts[]
   quizs       Quizs[]
 
-  u_id        BigInt
+  u_id        BigInt?
   c_id        BigInt
-  class_user  Class_users   @relation(fields: [u_id, c_id], references: [u_id, c_id])
+  class_user  Class_users?  @relation(fields: [u_id, c_id], references: [u_id, c_id])
 }
 
 model Feedbacks {
