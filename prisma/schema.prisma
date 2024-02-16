@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  ASSISTANT
+  APPLICANT
+  BLACKLIST
+}
+
+model Class_users {
+  u_id         BigInt
+  c_id         BigInt
+  nickname     String       @db.VarChar(50)
+  is_favorite  Boolean      @default(false)
+
+  role         Role         @default(USER)
+  materials    Materials[]
+  prompts      Prompts[]
+
+  @@id([u_id, c_id])
+}
+
+model Materials {
+  id          BigInt        @id @default(autoincrement())
+  m_path      String
+  v_path      String
+  name        String        @db.VarChar(100)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  
+  feedbacks   Feedbacks[]
+  prompts     Prompts[]
+  quizs       Quizs[]
+
+  u_id        BigInt?
+  c_id        BigInt
+  class_user  Class_users?  @relation(fields: [u_id, c_id], references: [u_id, c_id])
+}
+
+model Feedbacks {
+  id          BigInt        @id @default(autoincrement())
+  content     String
+  created_at  DateTime?     @default(now())
+  m_id        BigInt
+
+  material    Materials     @relation(fields: [m_id], references: [id], onDelete: Cascade)
+}
+
+model Prompts {
+  id          BigInt        @id @default(autoincrement())
+  usage       BigInt
+  
+  messages    Messages[]
+
+  m_id        BigInt
+  material    Materials     @relation(fields: [m_id], references: [id], onDelete: Cascade)
+
+  u_id        BigInt
+  c_id        BigInt
+  class_user  Class_users   @relation(fields: [u_id, c_id], references: [u_id, c_id])
+}
+
+model Messages {
+  id          BigInt        @id @default(autoincrement())
+  question    String
+  answer      String
+  created_at  DateTime      @default(now())
+  is_save     Boolean       @default(false)
+  
+  p_id        BigInt
+  prompt      Prompts       @relation(fields: [p_id], references: [id], onDelete: Cascade)
+}
+
+model Quizs {
+  id          BigInt        @id @default(autoincrement())
+  content     Json
+
+  m_id        BigInt
+  material    Materials     @relation(fields: [m_id], references: [id], onDelete: Cascade)
+}
