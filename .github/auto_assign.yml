@@ -1,0 +1,8 @@
+addReviewers: true
+addAssignees: author
+numberOfReviewers: 0
+reviewers:
+  - yuminn-k
+  - Regulus0811
+  - Z00One
+runOnDraft: true
