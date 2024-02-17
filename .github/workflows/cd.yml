@@ -1,0 +1,30 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ['Docker Image CI']
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull Docker image
+        run: sudo docker pull z00one/minori-rag-app:latest
+      - name: Delete Old docker container
+        run: sudo docker rm -f minori-rag-app-container || true
+      - name: Run Docker Container
+        run: |
+          sudo docker run -d \
+          -p 3000:3000 \
+          -P 5432:5432 \
+          -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+          -e JWT_ACCESS_SECRET=${{ secrets.JWT_ACCESS_SECRET }} \
+          -e JWT_ACESS_EXPIRATION=${{ secrets.JWT_ACESS_EXPIRATION }} \
+          -e JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }} \
+          -e JWT_REFRESH_EXPIRATION=${{ secrets.JWT_REFRESH_EXPIRATION }} \
+          --restart always \
+          --name minori-rag-app-container \
+          z00one/minori-rag-app
