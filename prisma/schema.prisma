@@ -27,6 +27,7 @@ model Class_users {
   role         Role         @default(USER)
   materials    Materials[]
   prompts      Prompts[]
+  class_user_quizs Class_user_quizs[]
 
   @@id([u_id, c_id])
 }
@@ -38,6 +39,7 @@ model Materials {
   name        String        @db.VarChar(100)
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
+  quiz_deadline    DateTime?
   
   feedbacks   Feedbacks[]
   prompts     Prompts[]
@@ -86,6 +88,22 @@ model Quizs {
   id          BigInt        @id @default(autoincrement())
   content     Json
 
+  class_user_quizs     Class_user_quizs[]
+
   m_id        BigInt
   material    Materials     @relation(fields: [m_id], references: [id], onDelete: Cascade)
+}
+
+model Class_user_quizs {
+  result      Boolean
+  created_at  DateTime      @default(now())
+
+  u_id        BigInt
+  c_id        BigInt
+  class_user  Class_users   @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+
+  q_id        BigInt
+  quiz        Quizs         @relation(fields: [q_id], references: [id], onDelete: Cascade)
+
+  @@id([u_id, c_id])
 }
