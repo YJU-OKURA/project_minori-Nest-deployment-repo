@@ -13,12 +13,12 @@ jobs:
     steps:
       - name: Pull Docker Image
         run: sudo docker pull z00one/minori-rag-app:latest
+      - name: Delete Old Docker Container
+        run: sudo docker rm -f minori-rag-app-container || true
       - name: Delete Old Docker Images
         run: |
           IMAGE_ID=$(sudo docker images -q z00one/minori-rag-app:latest)
           sudo docker images -q | grep -v $IMAGE_ID | xargs -r docker rmi
-      - name: Delete Old Docker Container
-        run: sudo docker rm -f minori-rag-app-container || true
       - name: Run Docker Container
         run: |
           sudo docker run -d \
