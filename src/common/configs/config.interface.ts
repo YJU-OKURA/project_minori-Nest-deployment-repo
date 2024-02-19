@@ -3,7 +3,7 @@ export interface Config {
   cors: CorsConfig;
   swagger: SwaggerConfig;
   winston: WinstonConfig;
-  // security: SecurityConfig;
+  security: SecurityConfig;
 }
 
 export interface NestConfig {
@@ -27,9 +27,7 @@ export interface WinstonConfig {
   env: string;
 }
 
-// TODO: jwt 관련 데이터 저장 방식 정하기
-// export interface SecurityConfig {
-//   expiresIn: string;
-//   refreshIn: string;
-//   bcryptSaltOrRound: string | number;
-// }
+export interface SecurityConfig {
+  secret: string;
+  expiresIn: string;
+}
