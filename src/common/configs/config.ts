@@ -20,12 +20,10 @@ const config: Config = {
     env: 'development',
   },
 
-  // TODO: jwt 관련 데이터 저장 방식 정하기
-  // security: {
-  //   expiresIn: '2m',
-  //   refreshIn: '7d',
-  //   bcryptSaltOrRound: 10,
-  // },
+  security: {
+    secret: process.env.JWT_ACCESS_SECRET || 'secret',
+    expiresIn: process.env.JWT_ACCESS_EXPIRATION || '30m',
+  },
 };
 
 export default (): Config => config;
