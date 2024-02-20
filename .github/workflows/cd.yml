@@ -18,7 +18,7 @@ jobs:
       - name: Delete Old Docker Images
         run: |
           IMAGE_ID=$(sudo docker images -q z00one/minori-rag-app:latest)
-          sudo docker images -q | grep -v $IMAGE_ID | xargs -r docker rmi
+          sudo docker images -q | grep -v $IMAGE_ID | xargs -r sudo docker rmi
       - name: Run Docker Container
         run: |
           sudo docker run -d \
