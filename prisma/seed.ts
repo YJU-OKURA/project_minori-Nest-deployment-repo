@@ -3,11 +3,11 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.class_users.deleteMany();
+  await prisma.class_user.deleteMany();
 
   console.log('Seeding...');
 
-  const user1 = await prisma.class_users.create({
+  const user1 = await prisma.class_user.create({
     data: {
       u_id: 1,
       c_id: 1,
@@ -16,7 +16,7 @@ async function main() {
       is_favorite: true,
     },
   });
-  const user2 = await prisma.class_users.create({
+  const user2 = await prisma.class_user.create({
     data: {
       u_id: 2,
       c_id: 1,
