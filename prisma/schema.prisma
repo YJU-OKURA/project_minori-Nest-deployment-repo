@@ -18,21 +18,21 @@ enum Role {
   BLACKLIST
 }
 
-model Class_users {
+model Class_user {
   u_id         BigInt
   c_id         BigInt
   nickname     String       @db.VarChar(50)
   is_favorite  Boolean      @default(false)
 
   role         Role         @default(USER)
-  materials    Materials[]
-  prompts      Prompts[]
-  class_user_quizs Class_user_quizs[]
+  materials    Material[]
+  prompts      Prompt[]
+  class_user_quizs Class_user_quiz[]
 
   @@id([u_id, c_id])
 }
 
-model Materials {
+model Material {
   id          BigInt        @id @default(autoincrement())
   m_path      String
   v_path      String
@@ -41,39 +41,39 @@ model Materials {
   updated_at  DateTime      @updatedAt
   quiz_deadline    DateTime?
   
-  feedbacks   Feedbacks[]
-  prompts     Prompts[]
-  quizs       Quizs[]
+  feedbacks   Feedback[]
+  prompts     Prompt[]
+  quizs       Quiz[]
 
   u_id        BigInt?
   c_id        BigInt
-  class_user  Class_users?  @relation(fields: [u_id, c_id], references: [u_id, c_id])
+  class_user  Class_user?   @relation(fields: [u_id, c_id], references: [u_id, c_id])
 }
 
-model Feedbacks {
+model Feedback {
   id          BigInt        @id @default(autoincrement())
   content     String
   created_at  DateTime?     @default(now())
   m_id        BigInt
 
-  material    Materials     @relation(fields: [m_id], references: [id], onDelete: Cascade)
+  material    Material      @relation(fields: [m_id], references: [id], onDelete: Cascade)
 }
 
-model Prompts {
+model Prompt {
   id          BigInt        @id @default(autoincrement())
   usage       BigInt
   
-  messages    Messages[]
+  messages    Message[]
 
   m_id        BigInt
-  material    Materials     @relation(fields: [m_id], references: [id], onDelete: Cascade)
+  material    Material      @relation(fields: [m_id], references: [id], onDelete: Cascade)
 
   u_id        BigInt
   c_id        BigInt
-  class_user  Class_users   @relation(fields: [u_id, c_id], references: [u_id, c_id])
+  class_user  Class_user    @relation(fields: [u_id, c_id], references: [u_id, c_id])
 }
 
-model Messages {
+model Message {
   id          BigInt        @id @default(autoincrement())
   question    String
   answer      String
@@ -81,29 +81,29 @@ model Messages {
   is_save     Boolean       @default(false)
   
   p_id        BigInt
-  prompt      Prompts       @relation(fields: [p_id], references: [id], onDelete: Cascade)
+  prompt      Prompt        @relation(fields: [p_id], references: [id], onDelete: Cascade)
 }
 
-model Quizs {
+model Quiz {
   id          BigInt        @id @default(autoincrement())
   content     Json
 
-  class_user_quizs     Class_user_quizs[]
+  class_user_quizs     Class_user_quiz[]
 
   m_id        BigInt
-  material    Materials     @relation(fields: [m_id], references: [id], onDelete: Cascade)
+  material    Material      @relation(fields: [m_id], references: [id], onDelete: Cascade)
 }
 
-model Class_user_quizs {
+model Class_user_quiz {
   result      Boolean
   created_at  DateTime      @default(now())
 
   u_id        BigInt
   c_id        BigInt
-  class_user  Class_users   @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+  class_user  Class_user    @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
 
   q_id        BigInt
-  quiz        Quizs         @relation(fields: [q_id], references: [id], onDelete: Cascade)
+  quiz        Quiz          @relation(fields: [q_id], references: [id], onDelete: Cascade)
 
   @@id([u_id, c_id])
 }

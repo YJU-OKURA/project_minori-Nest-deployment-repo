@@ -48,10 +48,10 @@ describe('AuthService', () => {
       await authService.getClassUserInfo(u_id, c_id),
     ).toEqual(classUserData);
     expect(
-      prismaService.class_users.findUnique,
+      prismaService.class_user.findUnique,
     ).toHaveBeenCalledTimes(1);
     expect(
-      prismaService.class_users.findUnique,
+      prismaService.class_user.findUnique,
     ).toHaveBeenCalledWith({
       where: { u_id_c_id: { u_id, c_id } },
     });
