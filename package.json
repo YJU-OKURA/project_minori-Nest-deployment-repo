@@ -74,7 +74,14 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage"
+    "modulePaths": [
+      "<rootDir>/.."
+    ],
+    "moduleNameMapper": {
+      "^@modules/(.*)$": "<rootDir>/modules/$1",
+      "^@middlewares/(.*)$": "<rootDir>/middlewares/$1",
+      "^@common/(.*)$": "<rootDir>/common/$1"
+    }
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
