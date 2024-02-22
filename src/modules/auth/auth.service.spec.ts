@@ -28,7 +28,7 @@ describe('AuthService', () => {
           {
             provide: PrismaService,
             useValue: {
-              class_users: {
+              class_user: {
                 findUnique: jest
                   .fn()
                   .mockResolvedValue(classUserData),
