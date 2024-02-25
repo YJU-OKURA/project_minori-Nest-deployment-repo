@@ -19,6 +19,15 @@ export const swagger = (app: INestApplication) => {
       swaggerConfig.description ||
         "The Minori Rag Application's API description",
     )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        name: 'JWT',
+        in: 'header',
+      },
+      'Authorization',
+    )
     .setVersion(swaggerConfig.version || '1.0')
     .build();
 
