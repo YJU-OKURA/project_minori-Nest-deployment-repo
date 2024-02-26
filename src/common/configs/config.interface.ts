@@ -4,6 +4,8 @@ export interface Config {
   swagger: SwaggerConfig;
   winston: WinstonConfig;
   security: SecurityConfig;
+  aws: AwsConfig;
+  langchain: LangchainConfig;
 }
 
 export interface NestConfig {
@@ -30,4 +32,21 @@ export interface WinstonConfig {
 export interface SecurityConfig {
   secret: string;
   expiresIn: string;
+}
+
+export interface AwsConfig {
+  region: string;
+  s3: S3Config;
+  cloudfront: string;
+}
+
+export interface S3Config {
+  accessKey: string;
+  secretAccessKey: string;
+  bucket: string;
+}
+
+export interface LangchainConfig {
+  openAIApiKey: string;
+  localStoragePath: string;
 }

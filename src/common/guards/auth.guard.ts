@@ -2,7 +2,6 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  GoneException,
   UnprocessableEntityException,
   UnauthorizedException,
   BadRequestException,
@@ -31,14 +30,16 @@ export class AuthGuard implements CanActivate {
     try {
       await this.jwtService.verifyAsync(token);
 
-      const client = this.jwtService.decode<{ id: bigint }>(
+      const { id } = this.jwtService.decode<{ id: bigint }>(
         token,
       );
-      request['body'] = request['body'] || {};
-      request['body']['client'] = client;
+
+      request['user'] = String(id);
     } catch (error) {
       if (error instanceof TokenExpiredError) {
-        throw new GoneException('Token is expired.');
+        throw new UnauthorizedException(
+          'Token is expired.',
+        );
       }
 
       throw new UnauthorizedException('Invalid token.');

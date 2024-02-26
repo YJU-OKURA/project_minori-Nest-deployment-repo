@@ -27,6 +27,13 @@ jobs:
           -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
           -e JWT_ACCESS_SECRET=${{ secrets.JWT_ACCESS_SECRET }} \
           -e JWT_ACCESS_EXPIRATION=${{ secrets.JWT_ACCESS_EXPIRATION }} \
+          -e AWS_REGION=${{ secrets.AWS_REGION }} \
+          -e AWS_S3_ACCESS_KEY=${{ secrets.AWS_S3_ACCESS_KEY }} \
+          -e AWS_S3_SECRET_ACCESS_KEY=${{ secrets.AWS_S3_SECRET_ACCESS_KEY }} \
+          -e AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }} \
+          -e AWS_CLOUDFRONT=${{ secrets.AWS_CLOUDFRONT }} \
+          -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+          -v volume:${{ secrets.VOLUME }} \
           --restart always \
           --name minori-rag-app-container \
           z00one/minori-rag-app:latest
