@@ -5,20 +5,24 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { LangchainConfig } from '@common/configs/config.interface';
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
-import { TokenTextSplitter } from 'langchain/text_splitter';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { FaissStore } from '@langchain/community/vectorstores/faiss';
 import { Document } from '@langchain/core/documents';
+import { Tiktoken, get_encoding } from 'tiktoken';
 
 @Injectable()
 export class LangchainService {
   private readonly langchainConfig: LangchainConfig;
+  private tokenizer: Tiktoken;
 
   constructor(
     private readonly configService: ConfigService,
   ) {
     this.langchainConfig =
       this.configService.get<LangchainConfig>('langchain');
+
+    this.tokenizer = get_encoding('cl100k_base');
   }
 
   /**
@@ -75,10 +79,10 @@ export class LangchainService {
     const loader = new PDFLoader(blob);
     const pages = await loader.loadAndSplit();
 
-    const splitter = new TokenTextSplitter({
-      encodingName: 'cl100k_base',
+    const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 500,
       chunkOverlap: 100,
+      lengthFunction: this.tiktoken_len,
     });
 
     return await splitter.splitDocuments(pages);
@@ -94,8 +98,7 @@ export class LangchainService {
     path: string,
   ): Promise<void> {
     const embeddingsModel = new OpenAIEmbeddings({
-      openAIApiKey:
-        this.configService.get<string>('openAIApiKey'),
+      openAIApiKey: this.langchainConfig.openAIApiKey,
     });
 
     const db = await FaissStore.fromDocuments(
@@ -104,4 +107,8 @@ export class LangchainService {
     );
     await db.save(path);
   }
+
+  private tiktoken_len = (text: string) => {
+    return this.tokenizer.encode(text).length;
+  };
 }
