@@ -33,7 +33,7 @@ jobs:
           -e AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }} \
           -e AWS_CLOUDFRONT=${{ secrets.AWS_CLOUDFRONT }} \
           -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
-          -e LOCAL_STORAGE_PATH=${{ secrets.LOCAL_STORAGE_PATH }} \
+          -v volume:${{ secrets.VOLUME }} \
           --restart always \
           --name minori-rag-app-container \
           z00one/minori-rag-app:latest
