@@ -39,7 +39,7 @@ const config: Config = {
     openAIApiKey:
       process.env.OPENAI_API_KEY || 'openAIApiKey',
     localStoragePath:
-      process.env.OPENAI_API_KEY || '/c/vector-store',
+      process.env.LOCAL_STORAGE_PATH || '/c/vector-store',
   },
 };
 
