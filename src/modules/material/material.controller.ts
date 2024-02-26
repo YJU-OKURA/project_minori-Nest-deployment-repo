@@ -10,19 +10,15 @@ import {
   Req,
   UploadedFile,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@common/guards/auth.guard';
 import { Role } from '@prisma/client';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateMaterialDto } from './dto/create.dto';
 import { MaterialService } from './material.service';
 import { FileValidationPipe } from '@common/pipes/file.pipe';
 import { UseRoleGuards } from '@common/decorators/use-role-guards.decorator';
 import {
   ApiBadRequestResponse,
-  ApiBody,
-  ApiConsumes,
   ApiExtraModels,
   ApiParam,
 } from '@nestjs/swagger';
@@ -31,6 +27,7 @@ import { ApiAuthMetadata } from '@common/decorators/api-auth.operator';
 import { MaterialEntity } from './entity/material.entity';
 import { ResponseFormat } from '@common/utils/response.util';
 import { ApiResponseWithBody } from '@common/decorators/api-response';
+import { ApiFile } from '@common/decorators/api-file.decorator';
 
 @UseGuards(AuthGuard)
 @ApiAuthMetadata('Materials')
@@ -106,15 +103,16 @@ export class MaterialController {
     description:
       '資料の名称とPDFファイルデータが必要です。',
   })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    type: CreateMaterialDto,
-    description:
-      '資料の名称とPDFファイルデータが必要です。',
-  })
+  @ApiFile([
+    {
+      name: {
+        type: 'string',
+        description: '資料の名称',
+      },
+    },
+  ])
   @Post()
   @UseRoleGuards([Role.ADMIN])
-  @UseInterceptors(FileInterceptor('file'))
   async create(
     @Req() req: Request,
     @Body() body: CreateMaterialDto,
@@ -142,15 +140,16 @@ export class MaterialController {
     description:
       '資料名称、またはPDFファイルデータが必要です。',
   })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    type: UpdateMaterialDto,
-    description:
-      '資料名称、またはPDFファイルデータが必要です。',
-  })
+  @ApiFile([
+    {
+      name: {
+        type: 'string',
+        description: '資料の名称',
+      },
+    },
+  ])
   @Patch('/:id')
   @UseRoleGuards([Role.ADMIN])
-  @UseInterceptors(FileInterceptor('file'))
   async update(
     @Body() body: UpdateMaterialDto,
     @Param('id') id: string,
