@@ -37,7 +37,7 @@ const config: Config = {
   },
   langchain: {
     openAIApiKey:
-      process.env.OPENAI_API_KEY || 'openAIApiKey',
+      process.env.OPENAI_API_KEY_FOR_NEST || 'openAIApiKey',
     localStoragePath:
       process.env.LOCAL_STORAGE_PATH || '/c/vector-store',
   },
