@@ -23,10 +23,10 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { UpdateMaterialDto } from './dto/update.dto';
-import { ApiAuthMetadata } from '@common/decorators/api-auth.operator';
+import { ApiAuthMetadata } from '@common/decorators/api-auth.decorator';
 import { MaterialEntity } from './entity/material.entity';
 import { ResponseFormat } from '@common/utils/response.util';
-import { ApiResponseWithBody } from '@common/decorators/api-response';
+import { ApiResponseWithBody } from '@common/decorators/api-response.decorator';
 import { ApiFile } from '@common/decorators/api-file.decorator';
 
 @UseGuards(AuthGuard)
