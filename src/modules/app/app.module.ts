@@ -10,7 +10,7 @@ import { LoggerMiddleware } from '@middlewares/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import config from '@common/configs/config';
-import { AuthModule } from '@modules/auth/auth.module';
+import { MaterialModule } from '@modules/material/material.module';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { AuthModule } from '@modules/auth/auth.module';
       load: [config],
     }),
     PrismaModule,
-    AuthModule,
+    MaterialModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],
