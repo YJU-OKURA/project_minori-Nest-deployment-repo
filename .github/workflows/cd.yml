@@ -32,7 +32,7 @@ jobs:
           -e AWS_S3_SECRET_ACCESS_KEY=${{ secrets.AWS_S3_SECRET_ACCESS_KEY }} \
           -e AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }} \
           -e AWS_CLOUDFRONT=${{ secrets.AWS_CLOUDFRONT }} \
-          -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+          -e OPENAI_API_KEY_FOR_NEST=${{ secrets.OPENAI_API_KEY_FOR_NEST }} \
           -v volume:${{ secrets.VOLUME }} \
           --restart always \
           --name minori-rag-app-container \
