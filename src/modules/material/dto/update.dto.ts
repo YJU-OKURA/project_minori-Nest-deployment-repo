@@ -14,5 +14,6 @@ export class UpdateMaterialDto {
     description: '300KB以下のPDFファイル',
     required: false,
   })
+  @IsOptional()
   file: Express.Multer.File;
 }
