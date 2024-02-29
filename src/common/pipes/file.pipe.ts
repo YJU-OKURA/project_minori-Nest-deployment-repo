@@ -14,8 +14,8 @@ export class FileValidationPipe implements PipeTransform {
     if (this.isFileRequired && !file) {
       throw new BadRequestException('File is required');
     }
-    const KB = 1024 * 8;
-    const size = 300 * KB;
+    const MB = 1024 * 1024 * 8;
+    const size = 10 * MB;
 
     if (file) {
       if (file.mimetype !== 'application/pdf') {
@@ -23,7 +23,7 @@ export class FileValidationPipe implements PipeTransform {
       }
       if (file.size > size) {
         throw new BadRequestException(
-          'File size exceeds limit',
+          'File size exceeds limit (10MB)',
         );
       }
     }
