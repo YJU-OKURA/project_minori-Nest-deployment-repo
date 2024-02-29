@@ -2,6 +2,7 @@ import { UploadService } from '@modules/upload/upload.service';
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { MaterialRepository } from './material.repository';
@@ -146,7 +147,7 @@ export class MaterialService {
     const material = await this.materialRepository.findOne(
       id,
     );
-    this.deleteFile(material.m_path, material.v_path);
+    await this.deleteFile(material.m_path, material.v_path);
     return this.uploadAndVectorize(c_id, file);
   }
 
@@ -160,15 +161,50 @@ export class MaterialService {
     c_id: string,
     file: Express.Multer.File,
   ) {
-    const v_path = await this.langchainService.vectorCreate(
-      file,
-      c_id,
-    );
-    const m_path = await this.uploadService.uploadToS3(
-      file,
-      c_id,
-    );
-    return { m_path, v_path };
+    const [v_pathResult, m_pathResult] =
+      await Promise.allSettled([
+        this.langchainService.vectorCreate(file, c_id),
+        this.uploadService.uploadToS3(file, c_id),
+      ]);
+
+    if (v_pathResult.status === 'rejected') {
+      await this.rollbackS3Upload(m_pathResult);
+      throw new InternalServerErrorException(
+        v_pathResult.reason.message,
+      );
+    }
+
+    if (m_pathResult.status === 'rejected') {
+      await this.rollbackVectorCreation(v_pathResult);
+      throw new InternalServerErrorException(
+        m_pathResult.reason.message,
+      );
+    }
+
+    return {
+      m_path: m_pathResult.value,
+      v_path: v_pathResult.value,
+    };
+  }
+
+  private async rollbackS3Upload(
+    m_pathResult: PromiseSettledResult<string>,
+  ) {
+    if (m_pathResult.status === 'fulfilled') {
+      await this.uploadService.deleteFileFromS3(
+        m_pathResult.value,
+      );
+    }
+  }
+
+  private async rollbackVectorCreation(
+    v_pathResult: PromiseSettledResult<string>,
+  ) {
+    if (v_pathResult.status === 'fulfilled') {
+      await this.uploadService.deleteFileFromLocal(
+        v_pathResult.value,
+      );
+    }
   }
 
   /**
