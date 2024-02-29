@@ -187,6 +187,10 @@ export class MaterialService {
     };
   }
 
+  /**
+   * S3アップロードをロールバック
+   * @param m_pathResult - S3アップロード結果
+   */
   private async rollbackS3Upload(
     m_pathResult: PromiseSettledResult<string>,
   ) {
@@ -197,6 +201,10 @@ export class MaterialService {
     }
   }
 
+  /**
+   * ベクター生成をロールバック
+   * @param v_pathResult - ベクター生成結果
+   */
   private async rollbackVectorCreation(
     v_pathResult: PromiseSettledResult<string>,
   ) {
