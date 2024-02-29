@@ -9,7 +9,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import { AwsConfig } from '@common/configs/config.interface';
-import { rmdir } from 'fs/promises';
+import { rm } from 'fs/promises';
 
 @Injectable()
 export class UploadService {
@@ -94,12 +94,11 @@ export class UploadService {
     path: string,
   ): Promise<boolean> {
     try {
-      await rmdir(path, {
+      await rm(path, {
         recursive: true,
       });
       return true;
-    } catch (error) {
-      console.log(error);
+    } catch {
       throw new InternalServerErrorException(
         'Failed to delete file from local',
       );
