@@ -10,7 +10,6 @@ export const swagger = (app: INestApplication) => {
   const configService = app.get(ConfigService);
   const swaggerConfig =
     configService.get<SwaggerConfig>('swagger');
-
   const config = new DocumentBuilder()
     .setTitle(
       swaggerConfig.title || 'Minori Rag Application',
@@ -29,15 +28,16 @@ export const swagger = (app: INestApplication) => {
       'Authorization',
     )
     .setVersion(swaggerConfig.version || '1.0')
+    .addGlobalParameters({
+      in: 'path',
+      required: true,
+      name: 'c_id',
+    })
     .build();
 
   const document = SwaggerModule.createDocument(
     app,
     config,
   );
-  SwaggerModule.setup(
-    swaggerConfig.path || 'api',
-    app,
-    document,
-  );
+  SwaggerModule.setup(swaggerConfig.path, app, document);
 };
