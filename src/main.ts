@@ -12,6 +12,7 @@ import { ResponseInterceptor } from '@common/interceptors/response.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.setGlobalPrefix('api/nest/class/:c_id');
   winstonLogger(app);
   swagger(app);
 
