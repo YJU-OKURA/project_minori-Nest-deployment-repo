@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -17,67 +18,49 @@ import { CreateMaterialDto } from './dto/create.dto';
 import { MaterialService } from './material.service';
 import { FileValidationPipe } from '@common/pipes/file.pipe';
 import { UseRoleGuards } from '@common/decorators/use-role-guards.decorator';
-import {
-  ApiBadRequestResponse,
-  ApiExtraModels,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse } from '@nestjs/swagger';
 import { UpdateMaterialDto } from './dto/update.dto';
 import { ApiAuthMetadata } from '@common/decorators/api-auth.decorator';
 import { MaterialEntity } from './entity/material.entity';
-import { ResponseFormat } from '@common/utils/response.util';
 import { ApiResponseWithBody } from '@common/decorators/api-response.decorator';
 import { ApiFile } from '@common/decorators/api-file.decorator';
 
 @UseGuards(AuthGuard)
 @ApiAuthMetadata('Materials')
-@ApiExtraModels(ResponseFormat)
-@Controller('class/:c_id/materials')
+@Controller('materials')
 export class MaterialController {
   constructor(
     private readonly materialService: MaterialService,
   ) {}
 
   @ApiResponseWithBody(
-    { summary: 'クラスIDによって資料の総数を取得' },
-    {
-      status: 200,
-      description:
-        '資料の総数が正常にインポートされました。',
-    },
+    HttpStatus.OK,
+    'クラスIDによって資料の総数を取得',
+    '資料の総数が正常にインポートされました。',
     Number,
   )
   @Get('/count')
   @UseRoleGuards()
   async countByCid(@Param('c_id') c_id: string) {
-    console.log(c_id);
     return this.materialService.countByCid(c_id);
   }
 
   @ApiResponseWithBody(
-    { summary: '資料を取得' },
-    {
-      status: 200,
-      description: '資料の取得に成功しました。',
-    },
+    HttpStatus.OK,
+    '資料を取得',
+    '資料の取得に成功しました。',
     MaterialEntity,
   )
   @Get('/:id')
   @UseRoleGuards()
-  @ApiParam({
-    name: 'c_id',
-    required: true,
-  })
   async get(@Param('id') id: string) {
     return this.materialService.get(id);
   }
 
   @ApiResponseWithBody(
-    { summary: 'クラスIDによる資料の取得' },
-    {
-      status: 200,
-      description: '資料の取得に成功しました。',
-    },
+    HttpStatus.OK,
+    'クラスIDによる資料の取得',
+    '資料の取得に成功しました。',
     MaterialEntity,
     true,
   )
@@ -92,11 +75,9 @@ export class MaterialController {
   }
 
   @ApiResponseWithBody(
-    { summary: '新しい資料の作成' },
-    {
-      status: 201,
-      description: '資料の作成に成功しました。',
-    },
+    HttpStatus.CREATED,
+    '新しい資料の作成',
+    '資料の作成に成功しました。',
     String,
   )
   @ApiBadRequestResponse({
@@ -129,11 +110,9 @@ export class MaterialController {
   }
 
   @ApiResponseWithBody(
-    { summary: '資料の更新' },
-    {
-      status: 204,
-      description: '資料の更新に成功しました。',
-    },
+    HttpStatus.NO_CONTENT,
+    '資料の更新',
+    '資料の更新に成功しました。',
     String,
   )
   @ApiBadRequestResponse({
@@ -166,17 +145,11 @@ export class MaterialController {
   }
 
   @ApiResponseWithBody(
-    { summary: '資料の削除' },
-    {
-      status: 204,
-      description: '資料の削除に成功しました。',
-    },
+    HttpStatus.NO_CONTENT,
+    '資料の削除',
+    '資料の削除に成功しました。',
     String,
   )
-  @ApiParam({
-    name: 'c_id',
-    required: true,
-  })
   @Delete('/:id')
   @UseRoleGuards([Role.ADMIN])
   async delete(@Param('id') id: string) {
