@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { MaterialRepository } from './material.repository';
-import { LangchainService } from '@modules/langchain/langchain.service';
+import { LangchainService } from '@modules/material/langchain/langchain.service';
 import { MaterialEntity } from './entity/material.entity';
 
 @Injectable()
