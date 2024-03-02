@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ResponseFormat<T> {
+export class ResponseFormat {
   @ApiProperty({
     example: 200,
     description: 'The status code of the response.',
@@ -10,13 +10,13 @@ export class ResponseFormat<T> {
   @ApiProperty({
     description: 'The actual response data.',
   })
-  response: T;
+  response: any;
 }
 
 export const responseFormat = (
   statusCode: number,
   res: any,
-): ResponseFormat<any> => ({
+): ResponseFormat => ({
   statusCode,
   response: res,
 });

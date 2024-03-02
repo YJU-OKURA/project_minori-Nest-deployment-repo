@@ -12,10 +12,12 @@ const config: Config = {
     description:
       "The Minori Rag Application's API description",
     version: '1.5',
-    path: 'api',
+    path: 'api/nest',
   },
   winston: {
-    logDir: 'logs',
+    logDir: process.env.LOCAL_STORAGE_PATH
+      ? `${process.env.LOCAL_STORAGE_PATH}/logs`
+      : '/c/logs',
     project: 'minori-rag-application',
     env: 'development',
   },
@@ -38,8 +40,9 @@ const config: Config = {
   langchain: {
     openAIApiKey:
       process.env.OPENAI_API_KEY_FOR_NEST || 'openAIApiKey',
-    localStoragePath:
-      process.env.LOCAL_STORAGE_PATH || '/c/vector-store',
+    localStoragePath: process.env.LOCAL_STORAGE_PATH
+      ? `${process.env.LOCAL_STORAGE_PATH}/vector-store`
+      : '/c/vector-store',
   },
 };
 
