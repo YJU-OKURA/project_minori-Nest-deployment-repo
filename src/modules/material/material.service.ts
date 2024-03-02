@@ -1,4 +1,4 @@
-import { UploadService } from '@modules/upload/upload.service';
+import { UploadService } from '@modules/material/upload/upload.service';
 import {
   BadRequestException,
   Injectable,
