@@ -11,19 +11,30 @@ export class MaterialEntity {
   @ApiProperty()
   name: string;
 
-  @ApiProperty()
+  @Exclude()
   created_at: Date;
 
-  @ApiProperty()
+  @Exclude()
   updated_at: Date;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({
+    example: [
+      {
+        id: 0,
+      },
+    ],
+    type: 'array',
+    isArray: true,
+  })
+  prompts: { id: bigint }[];
+
+  @Exclude()
   quiz_deadline?: Date;
 
-  @ApiProperty({ nullable: true })
+  @Exclude()
   u_id?: bigint;
 
-  @ApiProperty()
+  @Exclude()
   c_id: bigint;
 
   @Exclude()
