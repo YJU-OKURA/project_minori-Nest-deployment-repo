@@ -10,7 +10,7 @@ export class ResponseFormat {
   @ApiProperty({
     description: 'The actual response data.',
   })
-  response: any;
+  data: any;
 }
 
 export const responseFormat = (
@@ -18,5 +18,5 @@ export const responseFormat = (
   res: any,
 ): ResponseFormat => ({
   statusCode,
-  response: res,
+  data: res,
 });
