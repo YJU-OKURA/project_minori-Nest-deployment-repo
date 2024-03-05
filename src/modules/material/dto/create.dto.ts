@@ -1,15 +1,16 @@
-import { IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMaterialDto {
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
-    description: '教材の名前',
+    description: '資料の名前',
   })
   name: string;
 
   @ApiProperty({
-    description: '300KB以下のPDFファイル',
+    description: '10MB以下のPDFファイル',
   })
   file: Express.Multer.File;
 }
