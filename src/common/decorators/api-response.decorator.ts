@@ -18,7 +18,7 @@ export function ApiResponseWithBody(
   status: HttpStatus,
   summary: string,
   description: string,
-  type: Type,
+  type: Type = Object,
   isArray: boolean = false,
 ): MethodDecorator {
   return (
@@ -26,13 +26,23 @@ export function ApiResponseWithBody(
     propertyKey: string | symbol,
     descriptor: PropertyDescriptor,
   ) => {
+    const operationOptions: ApiOperationOptions = {
+      summary,
+    };
+    if (status === HttpStatus.NO_CONTENT) {
+      return applyDecorators(
+        ApiOperation(operationOptions),
+        ApiResponse({
+          status,
+          description,
+        }),
+        HttpCode(status),
+      )(target, propertyKey, descriptor);
+    }
     ApiExtraModels(type)(target, propertyKey, descriptor);
     const isPrimitive = [String, Boolean, Number].includes(
       type as any,
     );
-    const operationOptions: ApiOperationOptions = {
-      summary,
-    };
     const options: ApiResponseOptions = {
       status,
       description,
@@ -43,7 +53,7 @@ export function ApiResponseWithBody(
               { $ref: getSchemaPath(ResponseFormat) },
               {
                 properties: {
-                  response: {
+                  data: {
                     type: isPrimitive
                       ? type.name.toLowerCase()
                       : isArray
