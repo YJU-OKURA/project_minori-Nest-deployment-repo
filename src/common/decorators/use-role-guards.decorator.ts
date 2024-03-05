@@ -5,7 +5,7 @@ import { RolesGuard } from '@common/guards/role.guard';
 import { ApiForbiddenResponse } from '@nestjs/swagger';
 
 export const UseRoleGuards = (
-  role: Role[] = [Role.ADMIN, Role.USER],
+  role: Role[] = [Role.ADMIN, Role.USER, Role.ASSISTANT],
   description: string = undefined,
 ) => {
   if (
@@ -20,8 +20,7 @@ export const UseRoleGuards = (
     UseGuards(RolesGuard),
     ApiForbiddenResponse({
       description:
-        description ||
-        'クラスにアクセスする権限がありません。',
+        description || 'アクセスする権限がありません。',
     }),
   );
 };
