@@ -6,22 +6,46 @@ import { Material } from '@prisma/client';
 export class MaterialRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findOne(id: string): Promise<Material | null> {
+  async findOne(id: bigint) {
     return this.prisma.material.findUnique({
       where: {
-        id: BigInt(id),
+        id,
+      },
+      include: {
+        file: {
+          select: {
+            m_path: true,
+            v_path: true,
+          },
+        },
       },
     });
   }
 
   async getByCid(
-    c_id: string,
+    u_id: bigint,
+    c_id: bigint,
     page: number,
     limit: number,
   ): Promise<Material[] | null> {
     return this.prisma.material.findMany({
       where: {
-        c_id: BigInt(c_id),
+        c_id,
+      },
+      include: {
+        file: {
+          select: {
+            m_path: true,
+          },
+        },
+        prompts: {
+          where: {
+            u_id,
+          },
+          select: {
+            id: true,
+          },
+        },
       },
       skip: (page - 1) * limit,
       take: limit,
@@ -31,31 +55,35 @@ export class MaterialRepository {
     });
   }
 
-  async countByCid(c_id: string): Promise<number> {
+  async countByCid(c_id: bigint): Promise<number> {
     return this.prisma.material.count({
       where: {
-        c_id: BigInt(c_id),
+        c_id,
       },
     });
   }
 
   async create(
     name: string,
-    u_id: string,
-    c_id: string,
+    u_id: bigint,
+    c_id: bigint,
     m_path: string,
     v_path: string,
   ): Promise<Material> {
     return this.prisma.material.create({
       data: {
         name,
-        m_path,
-        v_path,
+        file: {
+          create: {
+            m_path,
+            v_path,
+          },
+        },
         class_user: {
           connect: {
             u_id_c_id: {
-              u_id: BigInt(u_id),
-              c_id: BigInt(c_id),
+              u_id,
+              c_id,
             },
           },
         },
@@ -64,27 +92,68 @@ export class MaterialRepository {
   }
 
   async update(
-    id: string,
+    id: bigint,
     name: string,
     m_path: string,
     v_path: string,
   ): Promise<Material> {
     return this.prisma.material.update({
       where: {
-        id: BigInt(id),
+        id,
       },
       data: {
         name,
-        m_path,
-        v_path,
+        file: {
+          update: {
+            m_path,
+            v_path,
+          },
+        },
       },
     });
   }
 
-  async delete(id: string): Promise<Material> {
+  async delete(id: bigint): Promise<Material> {
     return this.prisma.material.delete({
       where: {
-        id: BigInt(id),
+        id,
+      },
+    });
+  }
+
+  async search(
+    u_id: bigint,
+    c_id: bigint,
+    name: string,
+    page: number,
+    limit: number,
+  ) {
+    return this.prisma.material.findMany({
+      where: {
+        name: {
+          contains: name,
+        },
+        c_id,
+      },
+      include: {
+        file: {
+          select: {
+            m_path: true,
+          },
+        },
+        prompts: {
+          where: {
+            u_id,
+          },
+          select: {
+            id: true,
+          },
+        },
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: {
+        created_at: 'desc',
       },
     });
   }
