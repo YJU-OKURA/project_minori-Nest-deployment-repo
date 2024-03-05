@@ -7,10 +7,18 @@ import {
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from '@middlewares/logger.middleware';
-import { ConfigModule } from '@nestjs/config';
+import {
+  ConfigModule,
+  ConfigService,
+} from '@nestjs/config';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import config from '@common/configs/config';
 import { MaterialModule } from '@modules/material/material.module';
+import { PromptModule } from '@modules/prompt/prompt.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from '@common/guards/auth.guard';
+import { JwtModule } from '@nestjs/jwt';
+import { SecurityConfig } from '@common/configs/config.interface';
 
 @Module({
   imports: [
@@ -19,10 +27,31 @@ import { MaterialModule } from '@modules/material/material.module';
       load: [config],
     }),
     PrismaModule,
+    JwtModule.registerAsync({
+      useFactory: async (configService: ConfigService) => {
+        const securityConfig =
+          configService.get<SecurityConfig>('security');
+        return {
+          secret: securityConfig.secret,
+          signOptions: {
+            expiresIn: securityConfig.expiresIn,
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
     MaterialModule,
+    PromptModule,
   ],
   controllers: [AppController],
-  providers: [AppService, Logger],
+  providers: [
+    AppService,
+    Logger,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
