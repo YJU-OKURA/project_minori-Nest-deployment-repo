@@ -7,8 +7,10 @@ export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Get class user
-   * @returns Class_users
+   * クラスユーザーを取得
+   * @param u_id - ユーザーID
+   * @param c_id - クラスID
+   * @returns クラスユーザー
    */
   async getClassUserInfo(
     u_id: bigint,
