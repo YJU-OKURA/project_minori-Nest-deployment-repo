@@ -81,6 +81,8 @@ export class PromptController {
     HttpStatus.OK,
     '保存されたメッセージを取得',
     '保存されたメッセージを取得に成功しました。',
+    MessageEntity,
+    true,
   )
   @Get('/:id/messages/saved')
   @UseRoleGuards()
