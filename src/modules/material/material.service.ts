@@ -109,27 +109,17 @@ export class MaterialService {
     name: string = undefined,
     file: Express.Multer.File = undefined,
   ): Promise<string> {
-    let m_path: string,
-      v_path: string = undefined;
-
     if (!name && !file) {
       throw new BadRequestException(
         'name or file is required to update material',
       );
     }
     if (file) {
-      ({ m_path, v_path } = await this.updateFile(
-        id,
-        c_id,
-        file,
-      ));
+      await this.updateFile(id, c_id, file);
     }
-    await this.materialRepository.update(
-      id,
-      name,
-      m_path,
-      v_path,
-    );
+    if (name) {
+      await this.materialRepository.nameUpdate(id, name);
+    }
 
     return 'Material updated successfully';
   }
@@ -146,14 +136,32 @@ export class MaterialService {
     c_id: bigint,
     file: Express.Multer.File,
   ) {
+    const { m_path, v_path } =
+      await this.uploadAndVectorize(String(c_id), file);
+
     const material = await this.materialRepository.findOne(
       id,
     );
+
+    try {
+      await this.materialRepository.fileUpdate(
+        id,
+        m_path,
+        v_path,
+      );
+    } catch {
+      await this.deleteFile(m_path, v_path);
+      throw new InternalServerErrorException(
+        'file update failed',
+      );
+    }
+
     await this.deleteFile(
       material.file.m_path,
       material.file.v_path,
     );
-    return this.uploadAndVectorize(String(c_id), file);
+
+    return { m_path, v_path };
   }
 
   /**
