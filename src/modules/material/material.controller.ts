@@ -10,9 +10,7 @@ import {
   Query,
   Req,
   UploadedFile,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@common/guards/auth.guard';
 import { Role } from '@prisma/client';
 import { CreateMaterialDto } from './dto/create.dto';
 import { MaterialService } from './material.service';
@@ -24,8 +22,9 @@ import { ApiAuthMetadata } from '@common/decorators/api-auth.decorator';
 import { MaterialEntity } from './entity/material.entity';
 import { ApiResponseWithBody } from '@common/decorators/api-response.decorator';
 import { ApiFile } from '@common/decorators/api-file.decorator';
+import { BigIntPipe } from '@common/pipes/bigint.pipe';
+import { User } from '@common/decorators/user.decorator';
 
-@UseGuards(AuthGuard)
 @ApiAuthMetadata('Materials')
 @Controller('materials')
 export class MaterialController {
@@ -35,26 +34,39 @@ export class MaterialController {
 
   @ApiResponseWithBody(
     HttpStatus.OK,
+    '資料の検索',
+    '資料の検索に成功しました。',
+    MaterialEntity,
+    true,
+  )
+  @Get('search')
+  @UseRoleGuards()
+  search(
+    @User() u_id: bigint,
+    @Param('c_id', BigIntPipe) c_id: bigint,
+    @Query('name') name: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return this.materialService.search(
+      u_id,
+      c_id,
+      name,
+      page,
+      limit,
+    );
+  }
+
+  @ApiResponseWithBody(
+    HttpStatus.OK,
     'クラスIDによって資料の総数を取得',
     '資料の総数が正常にインポートされました。',
     Number,
   )
   @Get('/count')
   @UseRoleGuards()
-  async countByCid(@Param('c_id') c_id: string) {
+  countByCid(@Param('c_id', BigIntPipe) c_id: bigint) {
     return this.materialService.countByCid(c_id);
-  }
-
-  @ApiResponseWithBody(
-    HttpStatus.OK,
-    '資料を取得',
-    '資料の取得に成功しました。',
-    MaterialEntity,
-  )
-  @Get('/:id')
-  @UseRoleGuards()
-  async get(@Param('id') id: string) {
-    return this.materialService.get(id);
   }
 
   @ApiResponseWithBody(
@@ -66,12 +78,18 @@ export class MaterialController {
   )
   @Get()
   @UseRoleGuards()
-  async getByCid(
-    @Param('c_id') c_id: string,
+  getByCid(
+    @User() u_id: bigint,
+    @Param('c_id', BigIntPipe) c_id: bigint,
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    return this.materialService.getByCid(c_id, page, limit);
+    return this.materialService.getByCid(
+      u_id,
+      c_id,
+      page,
+      limit,
+    );
   }
 
   @ApiResponseWithBody(
@@ -94,16 +112,16 @@ export class MaterialController {
   ])
   @Post()
   @UseRoleGuards([Role.ADMIN])
-  async create(
-    @Req() req: Request,
+  create(
+    @User() u_id: bigint,
     @Body() body: CreateMaterialDto,
-    @Param('c_id') c_id: string,
+    @Param('c_id', BigIntPipe) c_id: bigint,
     @UploadedFile(new FileValidationPipe())
     file: Express.Multer.File,
   ): Promise<string> {
     return this.materialService.create(
       body.name,
-      req['user'],
+      u_id,
       c_id,
       file,
     );
@@ -113,7 +131,6 @@ export class MaterialController {
     HttpStatus.NO_CONTENT,
     '資料の更新',
     '資料の更新に成功しました。',
-    String,
   )
   @ApiBadRequestResponse({
     description:
@@ -129,10 +146,10 @@ export class MaterialController {
   ])
   @Patch('/:id')
   @UseRoleGuards([Role.ADMIN])
-  async update(
+  update(
     @Body() body: UpdateMaterialDto,
-    @Param('id') id: string,
-    @Param('c_id') c_id: string,
+    @Param('id', BigIntPipe) id: bigint,
+    @Param('c_id', BigIntPipe) c_id: bigint,
     @UploadedFile(new FileValidationPipe(false))
     file: Express.Multer.File,
   ) {
@@ -148,11 +165,10 @@ export class MaterialController {
     HttpStatus.NO_CONTENT,
     '資料の削除',
     '資料の削除に成功しました。',
-    String,
   )
   @Delete('/:id')
   @UseRoleGuards([Role.ADMIN])
-  async delete(@Param('id') id: string) {
+  delete(@Param('id', BigIntPipe) id: bigint) {
     return this.materialService.delete(id);
   }
 }

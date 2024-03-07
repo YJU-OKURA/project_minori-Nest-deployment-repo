@@ -30,6 +30,12 @@ async function bootstrap() {
     new ClassSerializerInterceptor(app.get(Reflector)),
   );
 
+  app.enableCors({
+    origin: ['http://localhost:3000'],
+    credentials: true,
+    exposedHeaders: ['Authorization'],
+  });
+
   await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
 bootstrap();

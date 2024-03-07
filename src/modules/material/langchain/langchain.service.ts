@@ -80,8 +80,8 @@ export class LangchainService {
     const pages = await loader.loadAndSplit();
 
     const splitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 500,
-      chunkOverlap: 100,
+      chunkSize: 200,
+      chunkOverlap: 20,
       lengthFunction: this.tiktoken_len,
     });
 

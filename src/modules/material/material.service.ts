@@ -22,7 +22,7 @@ export class MaterialService {
    * @param id - マテリアルのID
    * @returns - MaterialEntity
    */
-  async get(id: string): Promise<MaterialEntity> {
+  async get(id: bigint): Promise<MaterialEntity> {
     const material = await this.materialRepository.findOne(
       id,
     );
@@ -43,12 +43,14 @@ export class MaterialService {
    * @returns - MaterialEntityの配列
    */
   async getByCid(
-    c_id: string,
+    u_id: bigint,
+    c_id: bigint,
     page: number,
     limit: number,
   ): Promise<MaterialEntity[]> {
     const materials =
       await this.materialRepository.getByCid(
+        u_id,
         c_id,
         page,
         limit,
@@ -63,7 +65,7 @@ export class MaterialService {
    * @param c_id - クラスID
    * @returns - マテリアルの総数
    */
-  async countByCid(c_id: string): Promise<number> {
+  async countByCid(c_id: bigint): Promise<number> {
     return this.materialRepository.countByCid(c_id);
   }
 
@@ -77,12 +79,12 @@ export class MaterialService {
    */
   async create(
     name: string,
-    u_id: string,
-    c_id: string,
+    u_id: bigint,
+    c_id: bigint,
     file: Express.Multer.File,
   ): Promise<string> {
     const { m_path, v_path } =
-      await this.uploadAndVectorize(c_id, file);
+      await this.uploadAndVectorize(String(c_id), file);
     await this.materialRepository.create(
       name,
       u_id,
@@ -102,32 +104,22 @@ export class MaterialService {
    * @returns - Success message
    */
   async update(
-    id: string,
-    c_id: string,
+    id: bigint,
+    c_id: bigint,
     name: string = undefined,
     file: Express.Multer.File = undefined,
   ): Promise<string> {
-    let m_path: string,
-      v_path: string = undefined;
-
     if (!name && !file) {
       throw new BadRequestException(
         'name or file is required to update material',
       );
     }
     if (file) {
-      ({ m_path, v_path } = await this.updateFile(
-        id,
-        c_id,
-        file,
-      ));
+      await this.updateFile(id, c_id, file);
     }
-    await this.materialRepository.update(
-      id,
-      name,
-      m_path,
-      v_path,
-    );
+    if (name) {
+      await this.materialRepository.nameUpdate(id, name);
+    }
 
     return 'Material updated successfully';
   }
@@ -140,15 +132,36 @@ export class MaterialService {
    * @returns - Paths of uploaded and vectorized files
    */
   private async updateFile(
-    id: string,
-    c_id: string,
+    id: bigint,
+    c_id: bigint,
     file: Express.Multer.File,
   ) {
+    const { m_path, v_path } =
+      await this.uploadAndVectorize(String(c_id), file);
+
     const material = await this.materialRepository.findOne(
       id,
     );
-    await this.deleteFile(material.m_path, material.v_path);
-    return this.uploadAndVectorize(c_id, file);
+
+    try {
+      await this.materialRepository.fileUpdate(
+        id,
+        m_path,
+        v_path,
+      );
+    } catch {
+      await this.deleteFile(m_path, v_path);
+      throw new InternalServerErrorException(
+        'file update failed',
+      );
+    }
+
+    await this.deleteFile(
+      material.file.m_path,
+      material.file.v_path,
+    );
+
+    return { m_path, v_path };
   }
 
   /**
@@ -220,11 +233,14 @@ export class MaterialService {
    * @param id - マテリアルのID
    * @returns - Success message
    */
-  async delete(id: string): Promise<string> {
+  async delete(id: bigint): Promise<string> {
     const material = await this.materialRepository.findOne(
       id,
     );
-    await this.deleteFile(material.m_path, material.v_path);
+    await this.deleteFile(
+      material.file.m_path,
+      material.file.v_path,
+    );
     await this.materialRepository.delete(id);
     return 'Material deleted successfully';
   }
@@ -237,5 +253,24 @@ export class MaterialService {
   private async deleteFile(m_path: string, v_path: string) {
     await this.uploadService.deleteFileFromS3(m_path);
     await this.uploadService.deleteFileFromLocal(v_path);
+  }
+
+  async search(
+    u_id: bigint,
+    c_id: bigint,
+    name: string,
+    page: number,
+    limit: number,
+  ) {
+    const materials = await this.materialRepository.search(
+      u_id,
+      c_id,
+      name,
+      page,
+      limit,
+    );
+    return materials.map(
+      (material) => new MaterialEntity(material),
+    );
   }
 }

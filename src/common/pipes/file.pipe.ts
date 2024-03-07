@@ -11,21 +11,28 @@ export class FileValidationPipe implements PipeTransform {
   ) {}
 
   transform(file: Express.Multer.File) {
-    if (this.isFileRequired && !file) {
+    if (file?.buffer?.length === 0) {
+      throw new BadRequestException('File is empty');
+    }
+
+    if (!this.isFileRequired) {
+      return file;
+    }
+
+    if (!file) {
       throw new BadRequestException('File is required');
     }
 
-    if (file) {
-      if (file.mimetype !== 'application/pdf') {
-        throw new BadRequestException('Invalid file type');
-      }
-      const MB = 1024 * 1024 * 8;
-      const size = 10 * MB;
-      if (file.size > size) {
-        throw new BadRequestException(
-          'File size exceeds limit (10MB)',
-        );
-      }
+    if (file.mimetype !== 'application/pdf') {
+      throw new BadRequestException('Invalid file type');
+    }
+
+    const MB = 1024 * 1024 * 8;
+    const size = 10 * MB;
+    if (file.size > size) {
+      throw new BadRequestException(
+        'File size exceeds limit (10MB)',
+      );
     }
     return file;
   }
