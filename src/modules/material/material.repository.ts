@@ -104,7 +104,7 @@ export class MaterialRepository {
       data: {
         name,
         file: {
-          update: {
+          create: {
             m_path,
             v_path,
           },
@@ -154,6 +154,14 @@ export class MaterialRepository {
       take: limit,
       orderBy: {
         created_at: 'desc',
+      },
+    });
+  }
+
+  fileDelete(id: bigint) {
+    return this.prisma.file.delete({
+      where: {
+        f_id: id,
       },
     });
   }
