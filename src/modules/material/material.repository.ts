@@ -6,7 +6,7 @@ import { Material } from '@prisma/client';
 export class MaterialRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findOne(id: bigint) {
+  findOne(id: bigint) {
     return this.prisma.material.findUnique({
       where: {
         id,
@@ -22,7 +22,7 @@ export class MaterialRepository {
     });
   }
 
-  async getByCid(
+  getByCid(
     u_id: bigint,
     c_id: bigint,
     page: number,
@@ -55,7 +55,7 @@ export class MaterialRepository {
     });
   }
 
-  async countByCid(c_id: bigint): Promise<number> {
+  countByCid(c_id: bigint): Promise<number> {
     return this.prisma.material.count({
       where: {
         c_id,
@@ -63,7 +63,7 @@ export class MaterialRepository {
     });
   }
 
-  async create(
+  create(
     name: string,
     u_id: bigint,
     c_id: bigint,
@@ -91,24 +91,13 @@ export class MaterialRepository {
     });
   }
 
-  async update(
-    id: bigint,
-    name: string,
-    m_path: string,
-    v_path: string,
-  ): Promise<Material> {
+  nameUpdate(id: bigint, name: string): Promise<Material> {
     return this.prisma.material.update({
       where: {
         id,
       },
       data: {
         name,
-        file: {
-          create: {
-            m_path,
-            v_path,
-          },
-        },
       },
     });
   }
@@ -158,11 +147,15 @@ export class MaterialRepository {
     });
   }
 
-  fileDelete(id: bigint) {
-    return this.prisma.file.delete({
-      where: {
-        f_id: id,
-      },
-    });
+  fileUpdate(id: bigint, m_path: string, v_path: string) {
+    return this.prisma.$transaction([
+      this.prisma.file.delete({
+        where: { f_id: id },
+      }),
+      this.prisma.material.update({
+        where: { id: id },
+        data: { file: { create: { m_path, v_path } } },
+      }),
+    ]);
   }
 }
