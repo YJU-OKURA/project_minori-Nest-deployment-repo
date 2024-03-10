@@ -40,7 +40,6 @@ model Material {
   updated_at  DateTime      @updatedAt
   quiz_deadline    DateTime?
   
-  feedbacks   Feedback[]
   prompts     Prompt[]
   quizs       Quiz[]
 
@@ -79,15 +78,6 @@ model FileFeedback {
   f_id        BigInt
 
   file        File          @relation(fields: [f_id], references: [f_id], onDelete: Cascade)
-}
-
-model Feedback {
-  id          BigInt        @id @default(autoincrement())
-  content     String
-  created_at  DateTime?     @default(now())
-  m_id        BigInt
-
-  material    Material      @relation(fields: [m_id], references: [id], onDelete: Cascade)
 }
 
 model Prompt {
