@@ -34,6 +34,9 @@ interface ChainResult {
 export class LangchainService {
   private readonly langchainConfig: LangchainConfig;
   private usage: number;
+  private readonly NO_IDEA = 'NO IDEA.';
+  private readonly NO_IDEA_MESSAGE =
+    'We cannot respond as there is no data related to this material.';
 
   constructor(
     private readonly configService: ConfigService,
@@ -144,9 +147,9 @@ export class LangchainService {
 **Context:**
 {context}
 
-Use the information above to answer the user's question.
-Please tell me using the language used when asking the question.
-If you don't know the answer, just say that you don't know, don't try to make up an answer.
+your a assistant that helps you with questions about the material.
+Use the information above to answer the user's question.Please keep your answer at an appropriate length.
+If you don't know the answer, just say '${this.NO_IDEA}'
 `;
 
     const messages = [
@@ -249,12 +252,24 @@ If you don't know the answer, just say that you don't know, don't try to make up
 
     result.usage = this.usage;
 
-    result.answer = `${
-      result.answer
-    }\n\n 참조 : ${result.referInfo.map((r) => {
-      return `p.${r.page} `;
-    })}`;
-
+    if (result.answer === this.NO_IDEA) {
+      result.referInfo = [];
+      result.answer = this.NO_IDEA_MESSAGE;
+    } else {
+      const referedPages = [];
+      result.answer = `${
+        result.answer
+      }\n\n 참조 : ${result.referInfo
+        .reverse()
+        .map((r) => {
+          if (!referedPages.includes(r.page)) {
+            referedPages.push(r.page);
+            return `p.${r.page}`;
+          }
+        })
+        .filter((page) => page)
+        .join(', ')}`;
+    }
     return result;
   }
 }
