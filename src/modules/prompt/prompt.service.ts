@@ -72,7 +72,9 @@ export class PromptService {
       answer,
     );
 
-    await this.referCreate(id, f_id, referInfo);
+    if (referInfo.length) {
+      await this.referCreate(id, f_id, referInfo);
+    }
 
     return message;
   }
