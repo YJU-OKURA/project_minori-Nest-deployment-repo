@@ -6,7 +6,7 @@ import { PrismaModule } from '@modules/prisma/prisma.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { LangchainModule } from './langchain/langchain.module';
 import { MessageModule } from './message/message.module';
-import { ReferModule } from './refer/refer.module';
+import { ReferModule } from '../refer/refer.module';
 
 @Module({
   imports: [
