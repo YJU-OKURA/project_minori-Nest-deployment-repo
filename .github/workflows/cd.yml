@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  build:
+  deploy:
     runs-on: self-hosted
 
     steps:
@@ -34,6 +34,7 @@ jobs:
           -e AWS_CLOUDFRONT=${{ secrets.AWS_CLOUDFRONT }} \
           -e OPENAI_API_KEY_FOR_NEST=${{ secrets.OPENAI_API_KEY_FOR_NEST }} \
           -e LOCAL_STORAGE_PATH=${{ secrets.LOCAL_STORAGE_PATH }} \
+          -e ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }} \
           -v ${{ secrets.VOLUME }}:${{ secrets.LOCAL_STORAGE_PATH }} \
           --restart always \
           --name minori-rag-app-container \
