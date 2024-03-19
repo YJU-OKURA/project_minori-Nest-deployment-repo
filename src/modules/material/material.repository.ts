@@ -102,7 +102,7 @@ export class MaterialRepository {
     });
   }
 
-  async delete(id: bigint): Promise<Material> {
+  async remove(id: bigint): Promise<Material> {
     return this.prisma.material.delete({
       where: {
         id,

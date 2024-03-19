@@ -17,4 +17,20 @@ export class ReferRepository {
       data: referInfo,
     });
   }
+
+  getByMid(m_id: bigint) {
+    return this.prisma.refer.findMany({
+      where: {
+        f_id: m_id,
+      },
+      select: {
+        page: true,
+        content: true,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+      take: 90,
+    });
+  }
 }

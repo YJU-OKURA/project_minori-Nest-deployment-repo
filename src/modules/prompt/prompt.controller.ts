@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { PromptService } from './prompt.service';
-import { ApiAuthMetadata } from '@common/decorators/api-auth.decorator';
+import { ApiDefaultMetadata } from '@common/decorators/api-default.decorator';
 import { CreatePromptDto } from './dto/create.dto';
 import { ApiResponseWithBody } from '@common/decorators/api-response.decorator';
 import { UseRoleGuards } from '@common/decorators/use-role-guards.decorator';
@@ -21,7 +21,7 @@ import { ApiParam } from '@nestjs/swagger';
 import { PromptEntity } from './entity/prompt.entity';
 import { MessageEntity } from './entity/message.entity';
 
-@ApiAuthMetadata('Prompts')
+@ApiDefaultMetadata('Prompts')
 @Controller('prompts')
 export class PromptController {
   constructor(

@@ -233,7 +233,7 @@ export class MaterialService {
    * @param id - マテリアルのID
    * @returns - Success message
    */
-  async delete(id: bigint): Promise<string> {
+  async remove(id: bigint): Promise<string> {
     const material = await this.materialRepository.findOne(
       id,
     );
@@ -241,7 +241,7 @@ export class MaterialService {
       material.file.m_path,
       material.file.v_path,
     );
-    await this.materialRepository.delete(id);
+    await this.materialRepository.remove(id);
     return 'Material deleted successfully';
   }
 

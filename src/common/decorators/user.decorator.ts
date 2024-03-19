@@ -10,9 +10,7 @@ export const User = createParamDecorator(
     try {
       return BigInt(request.user);
     } catch {
-      throw new InternalServerErrorException(
-        'User ID is not valid.',
-      );
+      throw new InternalServerErrorException();
     }
   },
 );

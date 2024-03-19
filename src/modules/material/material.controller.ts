@@ -18,14 +18,14 @@ import { FileValidationPipe } from '@common/pipes/file.pipe';
 import { UseRoleGuards } from '@common/decorators/use-role-guards.decorator';
 import { ApiBadRequestResponse } from '@nestjs/swagger';
 import { UpdateMaterialDto } from './dto/update.dto';
-import { ApiAuthMetadata } from '@common/decorators/api-auth.decorator';
+import { ApiDefaultMetadata } from '@common/decorators/api-default.decorator';
 import { MaterialEntity } from './entity/material.entity';
 import { ApiResponseWithBody } from '@common/decorators/api-response.decorator';
 import { ApiFile } from '@common/decorators/api-file.decorator';
 import { BigIntPipe } from '@common/pipes/bigint.pipe';
 import { User } from '@common/decorators/user.decorator';
 
-@ApiAuthMetadata('Materials')
+@ApiDefaultMetadata('Materials')
 @Controller('materials')
 export class MaterialController {
   constructor(
@@ -168,7 +168,7 @@ export class MaterialController {
   )
   @Delete('/:id')
   @UseRoleGuards([Role.ADMIN])
-  delete(@Param('id', BigIntPipe) id: bigint) {
-    return this.materialService.delete(id);
+  remove(@Param('id', BigIntPipe) id: bigint) {
+    return this.materialService.remove(id);
   }
 }
