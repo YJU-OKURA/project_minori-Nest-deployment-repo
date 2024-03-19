@@ -19,6 +19,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from '@common/guards/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { SecurityConfig } from '@common/configs/config.interface';
+import { MaterialFeedbackModule } from '@modules/material-feedback/material-feedback.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { SecurityConfig } from '@common/configs/config.interface';
     }),
     MaterialModule,
     PromptModule,
+    MaterialFeedbackModule,
   ],
   controllers: [AppController],
   providers: [
