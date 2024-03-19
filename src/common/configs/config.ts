@@ -43,6 +43,8 @@ const config: Config = {
     localStoragePath: process.env.LOCAL_STORAGE_PATH
       ? `${process.env.LOCAL_STORAGE_PATH}/vector-store`
       : '/c/vector-store',
+    anthropicApiKey:
+      process.env.ANTHROPIC_API_KEY || 'anthropicApiKey',
   },
 };
 

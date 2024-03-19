@@ -49,4 +49,5 @@ export interface S3Config {
 export interface LangchainConfig {
   openAIApiKey: string;
   localStoragePath: string;
+  anthropicApiKey: string;
 }
