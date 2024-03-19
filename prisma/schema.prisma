@@ -63,6 +63,7 @@ model Refer {
   id          BigInt        @id @default(autoincrement())
   page        Int
   content     String
+  created_at  DateTime      @default(now())
 
   f_id        BigInt
   file        File          @relation(fields: [f_id], references: [f_id], onDelete: Cascade)
