@@ -5,24 +5,27 @@ import { Injectable } from '@nestjs/common';
 export class PromptRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  findOne(id: bigint) {
+  findOne(id: bigint, page: number, limit: number) {
     return this.prisma.prompt.findUnique({
       where: {
         id,
       },
       select: {
         id: true,
-        messages: {
-          select: {
-            id: true,
-            question: true,
-            answer: true,
-            is_save: true,
+        messages: page &&
+          limit && {
+            select: {
+              id: true,
+              question: true,
+              answer: true,
+              is_save: true,
+            },
+            orderBy: {
+              created_at: 'desc',
+            },
+            skip: (page - 1) * limit,
+            take: limit,
           },
-          orderBy: {
-            created_at: 'desc',
-          },
-        },
       },
     });
   }

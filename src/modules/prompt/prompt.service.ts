@@ -5,7 +5,8 @@ import {
 import { PromptRepository } from './prompt.repository';
 import { LangchainService } from './langchain/langchain.service';
 import { MessageRepository } from './message/message.repository';
-import { ReferRepository } from './refer/refer.repository';
+import { ReferRepository } from '@modules/refer/refer.repository';
+import { Response } from 'express';
 
 @Injectable()
 export class PromptService {
@@ -21,8 +22,8 @@ export class PromptService {
    * @param id - プロンプトのID
    * @returns - プロンプト
    */
-  get(id: bigint) {
-    return this.promptRepository.findOne(id);
+  get(id: bigint, page: number, limit: number) {
+    return this.promptRepository.findOne(id, page, limit);
   }
 
   /**
@@ -37,12 +38,12 @@ export class PromptService {
     c_id: bigint,
     m_id: bigint,
   ) {
-    const { id } = await this.promptRepository.create(
+    const prompt = await this.promptRepository.create(
       u_id,
       c_id,
       m_id,
     );
-    return this.get(id);
+    return prompt.id;
   }
 
   /**
@@ -51,7 +52,11 @@ export class PromptService {
    * @param question - 質問
    * @returns - 回答
    */
-  async question(id: bigint, question: string) {
+  async question(
+    id: bigint,
+    question: string,
+    response: Response,
+  ) {
     const { v_path, f_id } = await this.getFile(id);
 
     const previousMessages =
@@ -62,6 +67,7 @@ export class PromptService {
         v_path,
         question,
         previousMessages,
+        response,
       );
 
     await this.promptRepository.update(id, usage);

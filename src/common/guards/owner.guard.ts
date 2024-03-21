@@ -46,10 +46,14 @@ export class OwnerGuard implements CanActivate {
     }
 
     const p_id = BigInt(promptId as string);
-    const { u_id } = await this.prisma.prompt.findUnique({
+    const prompt = await this.prisma.prompt.findUnique({
       where: { id: p_id },
     });
 
-    return u_id === BigInt(userId);
+    if (!prompt) {
+      throw new UnauthorizedException('Invalid prompt id.');
+    }
+
+    return prompt.u_id === BigInt(userId);
   }
 }
