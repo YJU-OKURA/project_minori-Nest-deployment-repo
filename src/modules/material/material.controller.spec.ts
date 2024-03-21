@@ -67,11 +67,11 @@ describe('MaterialController', () => {
           }
           return Promise.resolve('update success');
         }),
-      delete: jest.fn().mockImplementation((id) => {
+      remove: jest.fn().mockImplementation((id) => {
         if (!id) {
           return Promise.reject(new Error('Error'));
         }
-        return Promise.resolve('delete success');
+        return Promise.resolve('remove success');
       }),
     };
 
@@ -175,11 +175,11 @@ describe('MaterialController', () => {
     expect(updated).toBe('update success');
   });
 
-  it('should delete a material', async () => {
+  it('should remove a material', async () => {
     const id = 1n;
-    const deleted = await controller.delete(id);
-    expect(service.delete).toHaveBeenCalledWith(id);
-    expect(deleted).toBe('delete success');
+    const removed = await controller.remove(id);
+    expect(service.remove).toHaveBeenCalledWith(id);
+    expect(removed).toBe('remove success');
   });
 
   it('should fail to count materials by class ID when service returns error', async () => {
@@ -240,7 +240,7 @@ describe('MaterialController', () => {
   it('should fail to delete a material when service returns error', async () => {
     try {
       const id = null;
-      await controller.delete(id);
+      await controller.remove(id);
     } catch (e) {
       expect(e.message).toBe('Error');
     }
