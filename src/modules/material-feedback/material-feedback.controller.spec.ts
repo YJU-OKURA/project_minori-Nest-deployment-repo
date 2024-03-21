@@ -142,7 +142,7 @@ describe('MaterialFeedbackController', () => {
   });
 
   function mockResponse(): Response {
-    const res: Partial<Response> = {}; // Partial을 사용하여 Response의 모든 속성이 선택적임을 나타냅니다.
+    const res: Partial<Response> = {};
     res.status = jest.fn().mockReturnThis();
     res.send = jest.fn().mockReturnThis();
     res.json = jest.fn().mockReturnThis();
