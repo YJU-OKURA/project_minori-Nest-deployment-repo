@@ -23,6 +23,7 @@ import {
 } from '@langchain/core/messages';
 import { VectorStoreRetriever } from '@langchain/core/vectorstores';
 import { Message } from '@prisma/client';
+import { Response } from 'express';
 
 interface ChainResult {
   referInfo: { page: number; content: string }[];
@@ -56,12 +57,18 @@ export class LangchainService {
     v_path: string,
     question: string,
     previousMessages: Message[],
+    response: Response,
   ) {
     const db = await this.loadDB(v_path);
     const chatHistory = await this.createChatHistory(
       previousMessages,
     );
-    return this.runPrompt(db, question, chatHistory);
+    return this.runPrompt(
+      db,
+      question,
+      chatHistory,
+      response,
+    );
   }
 
   /**
@@ -117,18 +124,25 @@ export class LangchainService {
     db: FaissStore,
     message: string,
     chatHistory: BaseMessage[],
+    response: Response,
   ): Promise<ChainResult> {
     try {
       const retriever = db.asRetriever({
         searchType: 'similarity',
-        k: 3,
+        k: 5,
       });
       const prompt = this.getPrompt();
       const chain = await this.createChain(
         retriever,
         prompt,
+        response,
       );
-      return this.runChain(chain, message, chatHistory);
+      return this.runChain(
+        chain,
+        message,
+        chatHistory,
+        response,
+      );
     } catch {
       throw new InternalServerErrorException(
         'Failed to run prompt',
@@ -148,8 +162,10 @@ export class LangchainService {
 {context}
 
 your a assistant that helps you with questions about the material.
-Use the information above to answer the user's question.Please keep your answer at an appropriate length.
-If you don't know the answer, just say '${this.NO_IDEA}'
+Use the information above to answer the user's question.
+
+**Caution:**
+✅ If you don't know the answer, just say '${this.NO_IDEA}'
 `;
 
     const messages = [
@@ -171,16 +187,26 @@ If you don't know the answer, just say '${this.NO_IDEA}'
   private async createChain(
     retriever: VectorStoreRetriever<FaissStore>,
     prompt: ChatPromptTemplate,
+    response: Response,
   ): Promise<RunnableSequence> {
+    response.writeHead(201, {
+      'Content-Type': 'text/plain',
+      'Transfer-Encoding': 'chunked',
+    });
+
     const llm = new ChatOpenAI({
       modelName: 'gpt-3.5-turbo',
       temperature: 0.1,
       openAIApiKey: this.langchainConfig.openAIApiKey,
+      streaming: true,
       callbacks: [
         {
+          handleLLMNewToken: async (token) => {
+            response.write(token);
+          },
           handleLLMEnd: async (output) => {
             this.usage =
-              output.llmOutput.tokenUsage.totalTokens;
+              output.llmOutput.estimatedTokenUsage.totalTokens;
           },
         },
       ],
@@ -244,6 +270,7 @@ If you don't know the answer, just say '${this.NO_IDEA}'
     chain: RunnableSequence,
     question: string,
     chatHistory: BaseMessage[],
+    response: Response,
   ): Promise<ChainResult> {
     const result: ChainResult = await chain.invoke({
       question,
@@ -269,6 +296,14 @@ If you don't know the answer, just say '${this.NO_IDEA}'
         })
         .filter((page) => page)
         .join(', ')}`;
+
+      response.write(
+        `\n\n 참조 : ${referedPages
+          .map((page) => {
+            return `p.${page}`;
+          })
+          .join(', ')}`,
+      );
     }
     return result;
   }
