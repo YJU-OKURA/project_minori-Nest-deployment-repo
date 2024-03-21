@@ -4,9 +4,12 @@ import {
   Get,
   HttpStatus,
   Param,
+  ParseBoolPipe,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
+  Res,
 } from '@nestjs/common';
 import { PromptService } from './prompt.service';
 import { ApiDefaultMetadata } from '@common/decorators/api-default.decorator';
@@ -20,6 +23,7 @@ import { UseOwnerGuards } from '@common/decorators/use-owner-guards.decorator';
 import { ApiParam } from '@nestjs/swagger';
 import { PromptEntity } from './entity/prompt.entity';
 import { MessageEntity } from './entity/message.entity';
+import { Response } from 'express';
 
 @ApiDefaultMetadata('Prompts')
 @Controller('prompts')
@@ -31,21 +35,25 @@ export class PromptController {
   @ApiResponseWithBody(
     HttpStatus.OK,
     'プロンプトを取得',
-    'プロンプトの取得に成功しました。',
+    'プロンプトのメッセージの取得に成功しました。',
     PromptEntity,
   )
   @Get('/:id')
   @UseRoleGuards()
   @UseOwnerGuards('Prompt')
-  get(@Param('id', BigIntPipe) id: bigint) {
-    return this.promptService.get(id);
+  get(
+    @Param('id', BigIntPipe) id: bigint,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    return this.promptService.get(id, page, limit);
   }
 
   @ApiResponseWithBody(
     HttpStatus.CREATED,
     '資料とユーザーのプロンプトを連結',
     '資料とユーザーのプロンプトの連結に成功しました。',
-    PromptEntity,
+    Number,
   )
   @Post()
   @UseRoleGuards()
@@ -70,11 +78,17 @@ export class PromptController {
   @Post('/:id')
   @UseRoleGuards()
   @UseOwnerGuards('Prompt')
-  question(
+  async question(
     @Param('id', BigIntPipe) id: bigint,
     @Body() body: CreateMessageDto,
+    @Res() response: Response,
   ) {
-    return this.promptService.question(id, body.message);
+    await this.promptService.question(
+      id,
+      body.message,
+      response,
+    );
+    response.end();
   }
 
   @ApiResponseWithBody(
@@ -106,7 +120,7 @@ export class PromptController {
   @UseOwnerGuards('Prompt')
   saveMessage(
     @Param('m_id', BigIntPipe) m_id: bigint,
-    @Query('is_save') is_save: boolean,
+    @Query('is_save', ParseBoolPipe) is_save: boolean,
   ) {
     return this.promptService.saveMessage(m_id, is_save);
   }
