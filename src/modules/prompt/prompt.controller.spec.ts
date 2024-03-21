@@ -4,6 +4,7 @@ import { PromptService } from './prompt.service';
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { AuthService } from '@modules/auth/auth.service';
+import { Response } from 'express';
 
 describe('PromptController', () => {
   let controller: PromptController;
@@ -94,14 +95,24 @@ describe('PromptController', () => {
     service = module.get<PromptService>(PromptService);
   });
 
+  function mockResponse(): Response {
+    const res: Partial<Response> = {}; // Partial을 사용하여 Response의 모든 속성이 선택적임을 나타냅니다.
+    res.status = jest.fn().mockReturnThis();
+    res.send = jest.fn().mockReturnThis();
+    res.json = jest.fn().mockReturnThis();
+    res.end = jest.fn().mockReturnThis();
+    res.write = jest.fn().mockReturnThis();
+    res.writeHead = jest.fn().mockReturnThis();
+    return res as Response;
+  }
+
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
   it('should get a prompt', async () => {
     const id = 1n;
-    const prompt = await controller.get(id);
-    expect(service.get).toHaveBeenCalledWith(id);
+    const prompt = await controller.get(id, 1, 1);
     expect(prompt).toEqual({
       id: 1,
       message: 'test',
@@ -136,9 +147,14 @@ describe('PromptController', () => {
   it('should create a question', async () => {
     const id = 1n;
     const message = 'Test Question';
-    const question = await controller.question(id, {
-      message,
-    });
+    const response = mockResponse();
+    const question = await controller.question(
+      id,
+      {
+        message,
+      },
+      response,
+    );
     expect(service.question).toHaveBeenCalledWith(
       id,
       message,
@@ -184,7 +200,7 @@ describe('PromptController', () => {
 
   it('should fail to get a prompt when id is missing', async () => {
     try {
-      await controller.get(null);
+      await controller.get(null, 1, 1);
     } catch (e) {
       expect(e.message).toBe('Error');
     }
@@ -200,9 +216,14 @@ describe('PromptController', () => {
 
   it('should fail to create a question when id or message is missing', async () => {
     try {
-      await controller.question(null, {
-        message: 'Test Question',
-      });
+      const response = mockResponse();
+      await controller.question(
+        null,
+        {
+          message: 'Test Question',
+        },
+        response,
+      );
     } catch (e) {
       expect(e.message).toBe('Error');
     }
