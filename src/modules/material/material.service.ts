@@ -61,15 +61,6 @@ export class MaterialService {
   }
 
   /**
-   * クラスIDによってマテリアルの総数を取得
-   * @param c_id - クラスID
-   * @returns - マテリアルの総数
-   */
-  async countByCid(c_id: bigint): Promise<number> {
-    return this.materialRepository.countByCid(c_id);
-  }
-
-  /**
    * マテリアルを作成
    * @param name - マテリアルの名前
    * @param u_id - ユーザーID

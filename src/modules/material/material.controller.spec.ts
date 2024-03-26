@@ -98,13 +98,6 @@ describe('MaterialController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should count materials by class ID', async () => {
-    const c_id = 1n;
-    const count = await controller.countByCid(c_id);
-    expect(service.countByCid).toHaveBeenCalledWith(c_id);
-    expect(count).toBe(1);
-  });
-
   it('should get materials by class ID', async () => {
     const u_id = 2n;
     const c_id = 1n;
@@ -180,15 +173,6 @@ describe('MaterialController', () => {
     const removed = await controller.remove(id);
     expect(service.remove).toHaveBeenCalledWith(id);
     expect(removed).toBe('remove success');
-  });
-
-  it('should fail to count materials by class ID when service returns error', async () => {
-    try {
-      const c_id = null;
-      await controller.countByCid(c_id);
-    } catch (e) {
-      expect(e.message).toBe('Error');
-    }
   });
 
   it('should fail to get materials by class ID when service returns error', async () => {
