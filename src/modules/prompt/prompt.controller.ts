@@ -101,8 +101,16 @@ export class PromptController {
   @Get('/:id/messages/saved')
   @UseRoleGuards()
   @UseOwnerGuards('Prompt')
-  getSavedMessages(@Param('id', BigIntPipe) id: bigint) {
-    return this.promptService.getSavedMessages(id);
+  getSavedMessages(
+    @Param('id', BigIntPipe) id: bigint,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    return this.promptService.getSavedMessages(
+      id,
+      page,
+      limit,
+    );
   }
 
   @ApiResponseWithBody(
