@@ -128,8 +128,16 @@ export class PromptService {
    * @param id - プロンプトのID
    * @returns - 保存されたメッセージ
    */
-  getSavedMessages(id: bigint) {
-    return this.promptRepository.getSavedMessages(id);
+  getSavedMessages(
+    id: bigint,
+    page: number,
+    limit: number,
+  ) {
+    return this.messageRepository.getSavedMessages(
+      id,
+      page,
+      limit,
+    );
   }
 
   /**
