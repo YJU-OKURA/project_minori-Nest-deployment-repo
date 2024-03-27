@@ -64,4 +64,29 @@ export class MessageRepository {
       },
     });
   }
+
+  getSavedMessages(
+    id: bigint,
+    page: number,
+    limit: number,
+  ) {
+    return this.prisma.message.findMany({
+      where: {
+        prompt: {
+          id,
+        },
+        is_save: true,
+      },
+      select: {
+        id: true,
+        question: true,
+        answer: true,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+  }
 }

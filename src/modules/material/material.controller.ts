@@ -59,18 +59,6 @@ export class MaterialController {
 
   @ApiResponseWithBody(
     HttpStatus.OK,
-    'クラスIDによって資料の総数を取得',
-    '資料の総数が正常にインポートされました。',
-    Number,
-  )
-  @Get('/count')
-  @UseRoleGuards()
-  countByCid(@Param('c_id', BigIntPipe) c_id: bigint) {
-    return this.materialService.countByCid(c_id);
-  }
-
-  @ApiResponseWithBody(
-    HttpStatus.OK,
     'クラスIDによる資料の取得',
     '資料の取得に成功しました。',
     MaterialEntity,

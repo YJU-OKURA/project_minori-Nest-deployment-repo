@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@modules/prisma/prisma.service';
-import { Class_user } from '@prisma/client';
+import { ClassUser } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -15,8 +15,8 @@ export class AuthService {
   async getClassUserInfo(
     u_id: bigint,
     c_id: bigint,
-  ): Promise<Class_user> {
-    return this.prisma.class_user.findUnique({
+  ): Promise<ClassUser> {
+    return this.prisma.classUser.findUnique({
       where: {
         u_id_c_id: {
           u_id,

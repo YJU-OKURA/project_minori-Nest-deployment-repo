@@ -18,7 +18,7 @@ enum Role {
   BLACKLIST
 }
 
-model Class_user {
+model ClassUser {
   u_id         BigInt
   c_id         BigInt
   nickname     String       @db.VarChar(50)
@@ -27,7 +27,9 @@ model Class_user {
   role         Role         @default(USER)
   materials    Material[]
   prompts      Prompt[]
-  class_user_quizs Class_user_quiz[]
+  class_user_quizs ClassUserQuiz[]
+  quizFeedbacks QuizFeedback[]
+
 
   @@id([u_id, c_id])
 }
@@ -38,14 +40,14 @@ model Material {
   name        String        @db.VarChar(100)
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
-  quiz_deadline    DateTime?
   
   prompts     Prompt[]
   quizs       Quiz[]
+  setQuizs    SetQuiz[]
 
   u_id        BigInt?
   c_id        BigInt
-  class_user  Class_user?   @relation(fields: [u_id, c_id], references: [u_id, c_id])
+  class_user  ClassUser?    @relation(fields: [u_id, c_id], references: [u_id, c_id])
 }
 
 model File {
@@ -95,7 +97,7 @@ model Prompt {
 
   u_id        BigInt
   c_id        BigInt
-  class_user  Class_user    @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+  class_user  ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
 }
 
 model Message {
@@ -112,23 +114,55 @@ model Message {
 model Quiz {
   id          BigInt        @id @default(autoincrement())
   content     Json
+  created_at  DateTime      @default(now())
 
-  class_user_quizs     Class_user_quiz[]
+  class_user_quizs     ClassUserQuiz[]
 
   m_id        BigInt
   material    Material      @relation(fields: [m_id], references: [id], onDelete: Cascade)
 }
 
-model Class_user_quiz {
-  result      Boolean
+model ClassUserQuiz {
+  result      Boolean?
   created_at  DateTime      @default(now())
 
   u_id        BigInt
   c_id        BigInt
-  class_user  Class_user    @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+  class_user  ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
 
   q_id        BigInt
   quiz        Quiz          @relation(fields: [q_id], references: [id], onDelete: Cascade)
 
-  @@id([u_id, c_id])
+  s_id        BigInt
+  setQuiz     SetQuiz       @relation(fields: [s_id], references: [id], onDelete: Cascade)
+  
+  @@id([u_id, c_id, q_id, s_id])
+}
+
+model SetQuiz {
+  id          BigInt        @id @default(autoincrement())
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  deadline    DateTime
+
+  quizFeedbacks        QuizFeedback[]
+
+  class_user_quizs     ClassUserQuiz[]
+
+  m_id        BigInt
+  material    Material      @relation(fields: [m_id], references: [id], onDelete: Cascade)
+}
+
+model QuizFeedback {
+  id          BigInt        @id @default(autoincrement())
+  content     String
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+
+  u_id        BigInt
+  c_id        BigInt
+  class_user  ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+
+  s_id        BigInt
+  setQuiz     SetQuiz       @relation(fields: [s_id], references: [id], onDelete: Cascade)
 }

@@ -55,14 +55,6 @@ export class MaterialRepository {
     });
   }
 
-  countByCid(c_id: bigint): Promise<number> {
-    return this.prisma.material.count({
-      where: {
-        c_id,
-      },
-    });
-  }
-
   create(
     name: string,
     u_id: bigint,

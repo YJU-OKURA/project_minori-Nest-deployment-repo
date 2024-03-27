@@ -39,7 +39,7 @@ describe('PromptController', () => {
         }),
       question: jest
         .fn()
-        .mockImplementation((id, message) => {
+        .mockImplementation((id, message, response) => {
           if (!id || !message) {
             return Promise.reject(new Error('Error'));
           }
@@ -158,6 +158,7 @@ describe('PromptController', () => {
     expect(service.question).toHaveBeenCalledWith(
       id,
       message,
+      response,
     );
     expect(question).toEqual({
       message: 'test',
@@ -166,9 +167,15 @@ describe('PromptController', () => {
 
   it('should get saved messages', async () => {
     const id = 1n;
-    const messages = await controller.getSavedMessages(id);
+    const messages = await controller.getSavedMessages(
+      id,
+      1,
+      2,
+    );
     expect(service.getSavedMessages).toHaveBeenCalledWith(
       id,
+      1,
+      2,
     );
     expect(messages).toEqual([
       {
@@ -231,7 +238,7 @@ describe('PromptController', () => {
 
   it('should fail to get saved messages when id is missing', async () => {
     try {
-      await controller.getSavedMessages(null);
+      await controller.getSavedMessages(null, null, null);
     } catch (e) {
       expect(e.message).toBe('Error');
     }

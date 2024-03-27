@@ -80,26 +80,4 @@ export class PromptRepository {
       },
     });
   }
-
-  getSavedMessages(id: bigint) {
-    return this.prisma.prompt.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        messages: {
-          where: {
-            is_save: true,
-          },
-          select: {
-            question: true,
-            answer: true,
-          },
-          orderBy: {
-            created_at: 'desc',
-          },
-        },
-      },
-    });
-  }
 }
