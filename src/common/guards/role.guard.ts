@@ -8,7 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { Role } from '@prisma/client';
 import { Request } from 'express';
 import { AuthService } from '@modules/auth/auth.service';
-import { KEY_OF_ROLES } from '@common/decorators/role.decorator';
+import { Key } from '@common/decorators/metadata.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -25,7 +25,7 @@ export class RolesGuard implements CanActivate {
       .getRequest<Request>();
 
     const requiredRoles = this.reflector.get<Role[]>(
-      KEY_OF_ROLES,
+      Key.ROLES,
       context.getHandler(),
     );
 
