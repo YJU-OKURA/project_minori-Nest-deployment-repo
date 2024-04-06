@@ -1,8 +1,8 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
-import { Roles } from './role.decorator';
 import { Role } from '@prisma/client';
 import { RolesGuard } from '@common/guards/role.guard';
 import { ApiForbiddenResponse } from '@nestjs/swagger';
+import { Key, MetaData } from './metadata.decorator';
 
 export const UseRoleGuards = (
   role: Role[] = [Role.ADMIN, Role.USER, Role.ASSISTANT],
@@ -16,7 +16,7 @@ export const UseRoleGuards = (
     description = '管理者権限が必要です。';
   }
   return applyDecorators(
-    Roles(role),
+    MetaData<Role[]>(Key.ROLES, role),
     UseGuards(RolesGuard),
     ApiForbiddenResponse({
       description:

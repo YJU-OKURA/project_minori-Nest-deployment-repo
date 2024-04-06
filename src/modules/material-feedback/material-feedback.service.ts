@@ -5,7 +5,7 @@ import {
 import { MaterialFeedbackRepository } from './material-feedback.repository';
 import { ReferRepository } from '@modules/refer/refer.repository';
 import { LangchainService } from './langchain/langchain.service';
-import { FileService } from './file/file.service';
+import { FileService } from '../file/file.service';
 import { Response } from 'express';
 
 @Injectable()

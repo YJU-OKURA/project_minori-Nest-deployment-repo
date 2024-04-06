@@ -6,7 +6,7 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { MaterialFeedbackRepository } from './material-feedback.repository';
 import { ReferModule } from '@modules/refer/refer.module';
 import { LangchainModule } from './langchain/langchain.module';
-import { FileModule } from './file/file.module';
+import { FileModule } from '../file/file.module';
 
 @Module({
   imports: [

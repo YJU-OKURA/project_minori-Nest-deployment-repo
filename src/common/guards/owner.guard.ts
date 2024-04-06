@@ -7,8 +7,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Prisma } from '@prisma/client';
 import { Request } from 'express';
-import { KEY_OF_MODELS } from '@common/decorators/model.decorator';
 import { PrismaService } from '@modules/prisma/prisma.service';
+import { Key } from '@common/decorators/metadata.decorator';
 
 @Injectable()
 export class OwnerGuard implements CanActivate {
@@ -25,35 +25,48 @@ export class OwnerGuard implements CanActivate {
       .getRequest<Request>();
 
     const model = this.reflector.get<Prisma.ModelName>(
-      KEY_OF_MODELS,
+      Key.MODELS,
       context.getHandler(),
     );
 
-    switch (model) {
-      case 'Prompt':
-        return await this.canActivatePrompt(request);
-    }
+    const idParamName = this.reflector.get<string>(
+      Key.ID_PARAM,
+      context.getHandler(),
+    );
+
+    return await this.checkOwnership(
+      request,
+      model,
+      idParamName,
+    );
   }
 
-  async canActivatePrompt(req: Request) {
+  private async checkOwnership(
+    req: Request,
+    modelName: Prisma.ModelName,
+    idParamName: string,
+  ): Promise<boolean> {
     const userId = req['user'];
-    const promptId = req.params['id'];
+    const resourceId = req.params[idParamName];
 
-    if (!userId || !promptId) {
+    if (!userId || !resourceId) {
       throw new UnauthorizedException(
-        'Invalid user or prompt id.',
+        'Invalid user or parameter.',
       );
     }
 
-    const p_id = BigInt(promptId as string);
-    const prompt = await this.prisma.prompt.findUnique({
-      where: { id: p_id },
+    const resource = await this.prisma[
+      modelName
+    ].findUnique({
+      where: { id: BigInt(resourceId) },
     });
 
-    if (!prompt) {
-      throw new UnauthorizedException('Invalid prompt id.');
+    if (!resource) {
+      throw new UnauthorizedException(
+        `Invalid ${idParamName}.`,
+      );
     }
 
-    return prompt.u_id === BigInt(userId);
+    return resource.u_id === BigInt(userId);
   }
 }
