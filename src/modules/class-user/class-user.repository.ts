@@ -25,4 +25,32 @@ export class ClassUserRepository {
       },
     });
   }
+
+  /**
+   * クラスのユーザーたちを取得
+   * @param c_id - クラスID
+   * @param page - ページ
+   * @param limit - 1ページあたりの表示数
+   * @returns クラスのユーザーたち
+   */
+  getClassUsersInfo(
+    c_id: bigint,
+    page: number = undefined,
+    limit: number = undefined,
+  ) {
+    return this.prisma.classUser.findMany({
+      where: {
+        c_id,
+      },
+      skip: page && (page - 1) * limit,
+      take: limit && limit,
+      select: {
+        u_id: true,
+        nickname: true,
+      },
+      orderBy: {
+        u_id: 'asc',
+      },
+    });
+  }
 }
