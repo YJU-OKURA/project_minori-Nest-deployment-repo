@@ -22,6 +22,7 @@ import { SecurityConfig } from '@common/configs/config.interface';
 import { MaterialFeedbackModule } from '@modules/material-feedback/material-feedback.module';
 import { QuizModule } from '@modules/quiz/quiz.module';
 import { SetQuizModule } from '@modules/set-quiz/set-quiz.module';
+import { QuizFeedbackModule } from '@modules/quiz-feedback/quiz-feedback.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { SetQuizModule } from '@modules/set-quiz/set-quiz.module';
     MaterialFeedbackModule,
     QuizModule,
     SetQuizModule,
+    QuizFeedbackModule,
   ],
   controllers: [AppController],
   providers: [
