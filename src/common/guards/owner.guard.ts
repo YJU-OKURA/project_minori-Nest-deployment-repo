@@ -2,6 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -55,18 +56,18 @@ export class OwnerGuard implements CanActivate {
       );
     }
 
-    const resource = await this.prisma[
-      modelName
-    ].findUnique({
-      where: { id: BigInt(resourceId) },
-    });
+    const resource = await this.prisma[modelName].findFirst(
+      {
+        where: { [idParamName]: BigInt(resourceId) },
+      },
+    );
 
     if (!resource) {
-      throw new UnauthorizedException(
+      throw new NotFoundException(
         `Invalid ${idParamName}.`,
       );
     }
 
-    return resource.u_id === BigInt(userId);
+    return resource[idParamName] === BigInt(userId);
   }
 }
