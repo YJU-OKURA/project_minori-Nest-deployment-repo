@@ -40,6 +40,38 @@ export class SetQuizRepository {
     });
   }
 
+  getResultByNickname(
+    m_id: bigint,
+    nickname: string,
+    page: number,
+    limit: number,
+  ) {
+    return this.prisma.classUserQuiz.findMany({
+      where: {
+        s_id: m_id,
+        class_user: {
+          nickname: {
+            contains: nickname,
+          },
+        },
+      },
+      select: {
+        result: true,
+        class_user: {
+          select: {
+            u_id: true,
+            nickname: true,
+          },
+        },
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+  }
+
   getResultByMId(s_id: bigint) {
     return this.prisma.classUserQuiz.findMany({
       where: {
