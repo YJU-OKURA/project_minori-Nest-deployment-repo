@@ -4,6 +4,7 @@ import {
   Get,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -65,6 +66,30 @@ export class SetQuizController {
       m_id,
       body.created_at,
       body.quizResults,
+    );
+  }
+
+  @ApiResponseWithBody(
+    HttpStatus.OK,
+    'ユーザーのニックネームでクイズの結果取得',
+    'ユーザーのニックネームでクイズの結果取得に成功しました。',
+    QuizResultEntity,
+  )
+  @UseRoleGuards([Role.ADMIN])
+  @Get('search')
+  getResultByNickname(
+    @Param('m_id', BigIntPipe) m_id: bigint,
+    @Param('c_id', BigIntPipe) c_id: bigint,
+    @Query('nickname') nickname: string,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    return this.setQuizService.getResultByNickname(
+      c_id,
+      m_id,
+      nickname,
+      page,
+      limit,
     );
   }
 
@@ -139,8 +164,8 @@ export class SetQuizController {
   getStatisticsUsers(
     @Param('c_id', BigIntPipe) c_id: bigint,
     @Param('m_id', BigIntPipe) m_id: bigint,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
   ) {
     return this.setQuizService.getStatisticsUsers(
       c_id,
