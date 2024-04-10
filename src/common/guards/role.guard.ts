@@ -7,13 +7,13 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Role } from '@prisma/client';
 import { Request } from 'express';
-import { AuthService } from '@modules/auth/auth.service';
 import { Key } from '@common/decorators/metadata.decorator';
+import { ClassUserRepository } from '@modules/class-user/class-user.repository';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
-    private readonly authService: AuthService,
+    private readonly classUserRepository: ClassUserRepository,
     private readonly reflector: Reflector,
   ) {}
 
@@ -46,7 +46,10 @@ export class RolesGuard implements CanActivate {
     const c_id = BigInt(classId as string);
 
     const classUser =
-      await this.authService.getClassUserInfo(u_id, c_id);
+      await this.classUserRepository.getClassUserInfo(
+        u_id,
+        c_id,
+      );
 
     if (!classUser) {
       throw new UnauthorizedException(
