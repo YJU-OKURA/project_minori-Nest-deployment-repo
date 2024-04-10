@@ -54,6 +54,39 @@ describe('SetQuizController', () => {
             return Promise.resolve('mark success');
           },
         ),
+      getResultByNickname: jest
+        .fn()
+        .mockImplementation(
+          (
+            m_id: bigint,
+            c_id: bigint,
+            nickname: string,
+            page: number,
+            limit: number,
+          ) => {
+            if (
+              !m_id ||
+              !c_id ||
+              !nickname ||
+              !page ||
+              !limit
+            ) {
+              return Promise.reject(new Error('Error'));
+            }
+            return Promise.resolve([
+              {
+                u_id: '1',
+                nickname: 'user1',
+                collectedRate: 'N/A',
+              },
+              {
+                u_id: '2',
+                nickname: 'user2',
+                collectedRate: 100,
+              },
+            ]);
+          },
+        ),
       post: jest
         .fn()
         .mockImplementation(
@@ -200,6 +233,40 @@ describe('SetQuizController', () => {
         created_at: null,
         quizResults: null,
       }),
+    ).rejects.toThrow('Error');
+  });
+
+  it('should get result by nickname', async () => {
+    const result = await controller.getResultByNickname(
+      1n,
+      1n,
+      'user1',
+      1,
+      2,
+    );
+    expect(result).toEqual([
+      {
+        u_id: '1',
+        nickname: 'user1',
+        collectedRate: 'N/A',
+      },
+      {
+        u_id: '2',
+        nickname: 'user2',
+        collectedRate: 100,
+      },
+    ]);
+  });
+
+  it('should be failed to get result by nickname', async () => {
+    await expect(
+      controller.getResultByNickname(
+        null,
+        null,
+        null,
+        null,
+        null,
+      ),
     ).rejects.toThrow('Error');
   });
 
