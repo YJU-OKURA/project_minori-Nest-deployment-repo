@@ -21,6 +21,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { SecurityConfig } from '@common/configs/config.interface';
 import { MaterialFeedbackModule } from '@modules/material-feedback/material-feedback.module';
 import { QuizModule } from '@modules/quiz/quiz.module';
+import { SetQuizModule } from '@modules/set-quiz/set-quiz.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { QuizModule } from '@modules/quiz/quiz.module';
     PromptModule,
     MaterialFeedbackModule,
     QuizModule,
+    SetQuizModule,
   ],
   controllers: [AppController],
   providers: [
