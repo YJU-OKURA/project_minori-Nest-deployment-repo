@@ -135,7 +135,7 @@ model ClassUserQuiz {
   s_id        BigInt
   quizList    QuizList      @relation(fields: [q_id, s_id], references: [q_id, s_id], onDelete: Cascade)
   
-  @@id([u_id, c_id])
+  @@id([u_id, c_id, q_id, s_id])
 }
 
 model SetQuiz {
