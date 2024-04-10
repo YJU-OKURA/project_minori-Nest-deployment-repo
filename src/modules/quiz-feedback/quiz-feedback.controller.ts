@@ -77,7 +77,7 @@ export class QuizFeedbackController {
     true,
   )
   @UseRoleGuards([Role.ADMIN])
-  @Get('user')
+  @Get('search')
   getFeedbacksByNickname(
     @Param('m_id', BigIntPipe) m_id: bigint,
     @Query('nickname') nickname: string,
