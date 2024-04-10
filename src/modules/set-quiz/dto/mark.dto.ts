@@ -31,7 +31,7 @@ class IsQuizResultArrayConstraint {
 }
 
 @ValidatorConstraint({ async: true })
-class IsBigIntConstraint
+export class IsBigIntConstraint
   implements ValidatorConstraintInterface
 {
   validate(value: any, args: ValidationArguments) {
