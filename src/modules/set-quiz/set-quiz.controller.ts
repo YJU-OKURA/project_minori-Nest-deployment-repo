@@ -94,7 +94,7 @@ export class SetQuizController {
     String,
   )
   @UseRoleGuards([Role.ADMIN])
-  @Patch('post-update')
+  @Patch('post')
   updatePost(
     @Param('m_id', BigIntPipe) m_id: bigint,
     @Body() body: UpdateSetQuizDto,
