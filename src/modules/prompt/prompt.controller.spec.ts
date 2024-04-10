@@ -3,8 +3,8 @@ import { PromptController } from './prompt.controller';
 import { PromptService } from './prompt.service';
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from '@modules/prisma/prisma.module';
-import { AuthService } from '@modules/auth/auth.service';
 import { Response } from 'express';
+import { ClassUserRepository } from '@modules/class-user/class-user.repository';
 
 describe('PromptController', () => {
   let controller: PromptController;
@@ -85,7 +85,7 @@ describe('PromptController', () => {
             provide: PromptService,
             useValue: mockService,
           },
-          AuthService,
+          ClassUserRepository,
         ],
       }).compile();
 

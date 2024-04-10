@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { QuizController } from './quiz.controller';
-import { AuthModule } from '@modules/auth/auth.module';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { QuizService } from './quiz.service';
 import {
   CreateUpdateQuizDto,
   QuizContent,
 } from './dto/create-update.dto';
+import { ClassUserModule } from '@modules/class-user/class-user.module';
 
 describe('QuizController', () => {
   let controller: QuizController;
@@ -129,7 +129,7 @@ describe('QuizController', () => {
     const module: TestingModule =
       await Test.createTestingModule({
         controllers: [QuizController],
-        imports: [AuthModule, PrismaModule],
+        imports: [ClassUserModule, PrismaModule],
         providers: [
           {
             provide: QuizService,

@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MaterialController } from './material.controller';
 import { MaterialService } from './material.service';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from '@modules/auth/auth.service';
 import { PrismaModule } from '@modules/prisma/prisma.module';
+import { ClassUserRepository } from '@modules/class-user/class-user.repository';
 
 describe('MaterialController', () => {
   let controller: MaterialController;
@@ -84,7 +84,7 @@ describe('MaterialController', () => {
             provide: MaterialService,
             useValue: mockService,
           },
-          AuthService,
+          ClassUserRepository,
         ],
       }).compile();
 
