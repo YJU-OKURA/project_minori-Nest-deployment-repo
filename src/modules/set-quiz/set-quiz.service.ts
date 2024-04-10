@@ -169,6 +169,30 @@ export class SetQuizService {
   }
 
   /**
+   * ニックネームでクイズ結果を取得
+   * @param m_id - マテリアルID
+   * @param nickname - ニックネーム
+   * @returns - クイズ結果
+   */
+  async getResultByNickname(
+    c_id: bigint,
+    m_id: bigint,
+    nickname: string,
+    page: number,
+    limit: number,
+  ) {
+    const classUsers =
+      await this.classUserRepository.getClassUsersByNickname(
+        c_id,
+        nickname,
+        page,
+        limit,
+      );
+
+    return this.getClassUsersCollectRate(classUsers, m_id);
+  }
+
+  /**
    * クイズセットを掲示
    * @param m_id - マテリアルID
    * @param deadline - 提出期限
@@ -242,27 +266,7 @@ export class SetQuizService {
         limit,
       );
 
-    const collectedRates = await Promise.all(
-      classUsers.map(async ({ u_id }) => {
-        const data =
-          await this.setQuizRepository.getResultByUId(
-            u_id,
-            m_id,
-          );
-
-        console.log(data);
-        return data.length
-          ? this.getCollectRate(data)
-          : 'N/A';
-      }),
-    );
-
-    return collectedRates.map((rate, i) => {
-      return {
-        ...classUsers[i],
-        collectedRate: rate,
-      };
-    });
+    return this.getClassUsersCollectRate(classUsers, m_id);
   }
 
   /**
@@ -349,5 +353,34 @@ export class SetQuizService {
     return Math.round(
       (collectedCount / results.length) * 100,
     );
+  }
+
+  private async getClassUsersCollectRate(
+    classUsers: {
+      u_id: bigint;
+      nickname: string;
+    }[],
+    m_id: bigint,
+  ) {
+    const collectedRates = await Promise.all(
+      classUsers.map(async ({ u_id }) => {
+        const data =
+          await this.setQuizRepository.getResultByUId(
+            u_id,
+            m_id,
+          );
+
+        return data.length
+          ? this.getCollectRate(data)
+          : 'N/A';
+      }),
+    );
+
+    return collectedRates.map((rate, i) => {
+      return {
+        ...classUsers[i],
+        collectedRate: rate,
+      };
+    });
   }
 }
