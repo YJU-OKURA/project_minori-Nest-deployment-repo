@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
+import { ClassUserRepository } from './class-user.repository';
 import { PrismaService } from '../prisma/prisma.service';
 
-describe('AuthService', () => {
-  let authService: AuthService;
+describe('ClassUserRepository', () => {
+  let classUserService: ClassUserRepository;
   let prismaService: PrismaService;
 
   const u_id = 3n;
@@ -24,7 +24,7 @@ describe('AuthService', () => {
     const module: TestingModule =
       await Test.createTestingModule({
         providers: [
-          AuthService,
+          ClassUserRepository,
           {
             provide: PrismaService,
             useValue: {
@@ -38,20 +38,22 @@ describe('AuthService', () => {
         ],
       }).compile();
 
-    authService = module.get<AuthService>(AuthService);
+    classUserService = module.get<ClassUserRepository>(
+      ClassUserRepository,
+    );
     prismaService =
       module.get<PrismaService>(PrismaService);
   });
 
   it('should return class user', async () => {
     expect(
-      await authService.getClassUserInfo(u_id, c_id),
+      await classUserService.getClassUserInfo(u_id, c_id),
     ).toEqual(classUserData);
     expect(
-      prismaService.class_user.findUnique,
+      prismaService.classUser.findUnique,
     ).toHaveBeenCalledTimes(1);
     expect(
-      prismaService.class_user.findUnique,
+      prismaService.classUser.findUnique,
     ).toHaveBeenCalledWith({
       where: { u_id_c_id: { u_id, c_id } },
     });

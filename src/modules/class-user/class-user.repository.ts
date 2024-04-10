@@ -3,7 +3,7 @@ import { PrismaService } from '@modules/prisma/prisma.service';
 import { ClassUser } from '@prisma/client';
 
 @Injectable()
-export class AuthService {
+export class ClassUserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
