@@ -135,7 +135,7 @@ model ClassUserQuiz {
   s_id        BigInt
   quizList    QuizList      @relation(fields: [q_id, s_id], references: [q_id, s_id], onDelete: Cascade)
   
-  @@id([u_id, c_id])
+  @@id([u_id, c_id, q_id, s_id])
 }
 
 model SetQuiz {
@@ -152,7 +152,6 @@ model SetQuiz {
 }
 
 model QuizFeedback {
-  id          BigInt        @id @default(autoincrement())
   content     String
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
@@ -163,6 +162,8 @@ model QuizFeedback {
 
   s_id        BigInt
   setQuiz     SetQuiz       @relation(fields: [s_id], references: [m_id], onDelete: Cascade)
+
+  @@id([u_id, c_id, s_id])
 }
 
 model QuizList {

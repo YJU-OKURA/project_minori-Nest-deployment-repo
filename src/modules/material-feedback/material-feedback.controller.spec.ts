@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MaterialFeedbackController } from './material-feedback.controller';
 import { MaterialFeedbackService } from './material-feedback.service';
 import { Response } from 'express';
-import { AuthModule } from '@modules/auth/auth.module';
 import { PrismaModule } from '@modules/prisma/prisma.module';
+import { ClassUserModule } from '@modules/class-user/class-user.module';
 
 describe('MaterialFeedbackController', () => {
   let controller: MaterialFeedbackController;
@@ -64,7 +64,7 @@ describe('MaterialFeedbackController', () => {
   beforeEach(async () => {
     const module: TestingModule =
       await Test.createTestingModule({
-        imports: [PrismaModule, AuthModule],
+        imports: [PrismaModule, ClassUserModule],
         controllers: [MaterialFeedbackController],
         providers: [
           {

@@ -49,7 +49,7 @@ export class QuizService {
       (quiz) =>
         new QuizEntity({
           id: quiz.id,
-          content: JSON.parse(quiz.content as string),
+          content: quiz.content,
         }),
     );
   }
@@ -76,15 +76,41 @@ export class QuizService {
     const document =
       await this.langchainService.getDocument(file);
 
-    const pageNumbers = refers
-      ? this.getReferedPageNumbers(document, refers)
-      : this.getRandomPageNumbers(document.length);
+    const pageNumbers = await this.getPageNumbers(
+      document,
+      refers,
+    );
 
     const pages = this.getPages(document, pageNumbers);
 
     const contents = pages.map((doc) => doc).join('\n\n');
 
     return await this.langchainService.getQuiz(contents);
+  }
+
+  /**
+   * ページ番号を取得
+   * @param document - ドキュメント
+   * @param refers - 参照データ
+   * @returns - ページ番号の配列
+   */
+  private async getPageNumbers(
+    document: string[],
+    refers?: { page: number; content: string }[],
+  ) {
+    // 랜덤 숫자 뽑기
+    const randomNumber = Math.floor(
+      Math.random() * document.length,
+    );
+    const isEven = randomNumber % 2 === 0;
+
+    if (!refers) {
+      return this.getRandomPageNumbers(document.length);
+    } else {
+      return isEven
+        ? this.getReferedPageNumbers(document, refers)
+        : this.getRandomPageNumbers(document.length);
+    }
   }
 
   /**

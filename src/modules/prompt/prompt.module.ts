@@ -3,14 +3,14 @@ import { PromptController } from './prompt.controller';
 import { PromptService } from './prompt.service';
 import { PromptRepository } from './prompt.repository';
 import { PrismaModule } from '@modules/prisma/prisma.module';
-import { AuthModule } from '@modules/auth/auth.module';
 import { LangchainModule } from './langchain/langchain.module';
 import { MessageModule } from './message/message.module';
 import { ReferModule } from '../refer/refer.module';
+import { ClassUserModule } from '@modules/class-user/class-user.module';
 
 @Module({
   imports: [
-    AuthModule,
+    ClassUserModule,
     PrismaModule,
     LangchainModule,
     MessageModule,

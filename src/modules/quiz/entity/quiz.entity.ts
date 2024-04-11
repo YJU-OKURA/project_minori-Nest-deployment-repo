@@ -1,13 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
-import { CreateUpdateQuizDto } from '../dto/create-update.dto';
+import { Exclude, Type } from 'class-transformer';
+import { QuizContent } from '../dto/create-update.dto';
+import { Prisma } from '@prisma/client';
+import { IsOptional } from 'class-validator';
 
 export class QuizEntity {
   @ApiProperty()
+  @IsOptional()
   id: bigint;
 
-  @ApiProperty({ type: () => CreateUpdateQuizDto })
-  content: CreateUpdateQuizDto;
+  @ApiProperty({ type: () => QuizContent })
+  @Type(() => QuizContent)
+  content: QuizContent | Prisma.JsonValue;
 
   @Exclude()
   created_at: Date;
@@ -16,6 +20,7 @@ export class QuizEntity {
   m_id: bigint;
 
   constructor(partial: Partial<QuizEntity>) {
+    partial.content = JSON.parse(partial.content as string);
     Object.assign(this, partial);
   }
 }
