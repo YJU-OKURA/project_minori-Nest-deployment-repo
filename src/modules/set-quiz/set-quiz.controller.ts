@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiResponseWithBody } from '@common/decorators/api-response.decorator';
 import { UseRoleGuards } from '@common/decorators/use-role-guards.decorator';
-import { Role } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 import { SetQuizService } from './set-quiz.service';
 import { CreateSetQuizDto } from './dto/create.dto';
 import { ApiDefaultMetadata } from '@common/decorators/api-default.decorator';
@@ -139,11 +139,8 @@ export class SetQuizController {
   )
   @UseRoleOrOwnerGuards(
     [Role.ADMIN],
-    'ClassUserQuiz',
-    'u_id',
+    Prisma.ModelName.ClassUserQuiz,
   )
-  // TODO: 유저 자신만 확인할 수 있도록 수정 해야함
-  // @UseOwnerGuards('ClassUserQuiz', 'u_id')
   @Get('result/user/:u_id')
   getResult(
     @Param('u_id', BigIntPipe) u_id: bigint,
