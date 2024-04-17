@@ -4,16 +4,13 @@ import { ApiForbiddenResponse } from '@nestjs/swagger';
 import { OwnerGuard } from '@common/guards/owner.guard';
 import { Key, MetaData } from './metadata.decorator';
 
-export const UseOwnerGuards = (
-  model: Prisma.ModelName,
-  id: string = 'id',
-) => {
+export const UseOwnerGuards = (model: Prisma.ModelName) => {
   return applyDecorators(
     MetaData<Prisma.ModelName>(Key.MODELS, model),
-    MetaData<string>(Key.ID_PARAM, id),
     UseGuards(OwnerGuard),
     ApiForbiddenResponse({
-      description: 'このアクセスする権限がありません。',
+      description:
+        'リソースにアクセスする権限がありません。',
     }),
   );
 };
