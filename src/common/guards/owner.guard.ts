@@ -30,44 +30,67 @@ export class OwnerGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const idParamName = this.reflector.get<string>(
-      Key.ID_PARAM,
-      context.getHandler(),
-    );
-
-    return await this.checkOwnership(
-      request,
-      model,
-      idParamName,
-    );
+    return await this.checkOwnership(request, model);
   }
 
   private async checkOwnership(
     req: Request,
     modelName: Prisma.ModelName,
-    idParamName: string,
   ): Promise<boolean> {
     const userId = req['user'];
-    const resourceId = req.params[idParamName];
+    const resourceInfo = req.params;
 
-    if (!userId || !resourceId) {
+    if (!userId || !resourceInfo) {
       throw new UnauthorizedException(
         'Invalid user or parameter.',
       );
     }
 
-    const resource = await this.prisma[modelName].findFirst(
-      {
-        where: { [idParamName]: BigInt(resourceId) },
-      },
+    const uId = await this.getUIdFromResouce(
+      modelName,
+      resourceInfo,
     );
 
-    if (!resource) {
-      throw new NotFoundException(
-        `Invalid ${idParamName}.`,
-      );
+    if (!uId) {
+      throw new NotFoundException('Resource not found.');
     }
 
-    return resource[idParamName] === BigInt(userId);
+    return BigInt(uId) === BigInt(userId);
+  }
+
+  private async getUIdFromResouce(
+    modelName: Prisma.ModelName,
+    resourceinfo: any,
+  ) {
+    const findResource = async (whereCondition: any) => {
+      const resource = await this.prisma[
+        modelName
+      ].findFirst({
+        where: whereCondition,
+      });
+      return resource?.u_id;
+    };
+
+    switch (modelName) {
+      case Prisma.ModelName.Prompt:
+        return await findResource({
+          id: BigInt(resourceinfo['id']),
+        });
+      case Prisma.ModelName.QuizFeedback:
+        return await findResource({
+          u_id_c_id_s_id: {
+            u_id: BigInt(resourceinfo['u_id']),
+            c_id: BigInt(resourceinfo['c_id']),
+            s_id: BigInt(resourceinfo['s_id']),
+          },
+        });
+      case Prisma.ModelName.ClassUserQuiz:
+        return await findResource({
+          u_id: BigInt(resourceinfo['u_id']),
+          s_id: BigInt(resourceinfo['m_id']),
+        });
+      default:
+        return null;
+    }
   }
 }
