@@ -7,15 +7,20 @@ export class SetQuizRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   getSettedQuizzesByMId(m_id: bigint) {
-    return this.prisma.quizList.findMany({
+    return this.prisma.setQuiz.findUnique({
       where: {
-        s_id: m_id,
+        m_id,
       },
       select: {
-        q_id: true,
-        quiz: {
+        deadline: true,
+        quizLists: {
           select: {
-            content: true,
+            q_id: true,
+            quiz: {
+              select: {
+                content: true,
+              },
+            },
           },
         },
       },
