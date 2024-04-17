@@ -21,7 +21,6 @@ import { UseRoleOrOwnerGuards } from '@common/decorators/use-role-or-owner-guard
 import { UpdateSetQuizDto } from './dto/update.dto';
 import { QuizEntity } from '@modules/quiz/entity/quiz.entity';
 import { MarkSetQuizDto } from './dto/mark.dto';
-import { UseOwnerGuards } from '@common/decorators/use-owner-guards.decorator';
 import { QuizResultEntity } from './entity/quiz-result.entity';
 import { StatisticsUsersEntity } from './entity/statistics-users.entity';
 import { StatisticsClassEntity } from './entity/statistics-class.entity';
