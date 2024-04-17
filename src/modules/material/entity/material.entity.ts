@@ -5,8 +5,14 @@ export class MaterialEntity {
   @ApiProperty()
   id: bigint;
 
-  @ApiProperty()
-  m_path: string;
+  @ApiProperty({
+    example: {
+      m_path: 'path/to/file',
+    },
+  })
+  file: {
+    m_path: string;
+  };
 
   @ApiProperty()
   name: string;
