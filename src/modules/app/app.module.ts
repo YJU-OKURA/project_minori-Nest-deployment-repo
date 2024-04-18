@@ -23,6 +23,7 @@ import { MaterialFeedbackModule } from '@modules/material-feedback/material-feed
 import { QuizModule } from '@modules/quiz/quiz.module';
 import { SetQuizModule } from '@modules/set-quiz/set-quiz.module';
 import { QuizFeedbackModule } from '@modules/quiz-feedback/quiz-feedback.module';
+import { QuizBankModule } from '@modules/quiz-bank/quiz-bank.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { QuizFeedbackModule } from '@modules/quiz-feedback/quiz-feedback.module'
     QuizModule,
     SetQuizModule,
     QuizFeedbackModule,
+    QuizBankModule,
   ],
   controllers: [AppController],
   providers: [
