@@ -228,6 +228,11 @@ export class MaterialService {
     const material = await this.materialRepository.findOne(
       id,
     );
+    if (!material) {
+      throw new NotFoundException(
+        'there is no material with the provided id',
+      );
+    }
     await this.deleteFile(
       material.file.m_path,
       material.file.v_path,

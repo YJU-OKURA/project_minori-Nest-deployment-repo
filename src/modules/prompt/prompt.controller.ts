@@ -24,6 +24,7 @@ import { ApiParam } from '@nestjs/swagger';
 import { PromptEntity } from './entity/prompt.entity';
 import { MessageEntity } from './entity/message.entity';
 import { Response } from 'express';
+import { Prisma } from '@prisma/client';
 
 @ApiDefaultMetadata('Prompts')
 @Controller('prompts')
@@ -40,7 +41,7 @@ export class PromptController {
   )
   @Get('/:id')
   @UseRoleGuards()
-  @UseOwnerGuards('Prompt')
+  @UseOwnerGuards(Prisma.ModelName.Prompt)
   get(
     @Param('id', BigIntPipe) id: bigint,
     @Query('page', ParseIntPipe) page: number,
@@ -77,7 +78,7 @@ export class PromptController {
   )
   @Post('/:id')
   @UseRoleGuards()
-  @UseOwnerGuards('Prompt')
+  @UseOwnerGuards(Prisma.ModelName.Prompt)
   async question(
     @Param('id', BigIntPipe) id: bigint,
     @Body() body: CreateMessageDto,
@@ -100,7 +101,7 @@ export class PromptController {
   )
   @Get('/:id/messages/saved')
   @UseRoleGuards()
-  @UseOwnerGuards('Prompt')
+  @UseOwnerGuards(Prisma.ModelName.Prompt)
   getSavedMessages(
     @Param('id', BigIntPipe) id: bigint,
     @Query('page', ParseIntPipe) page: number,
@@ -125,7 +126,7 @@ export class PromptController {
   })
   @Patch('/:id/messages/:m_id')
   @UseRoleGuards()
-  @UseOwnerGuards('Prompt')
+  @UseOwnerGuards(Prisma.ModelName.Prompt)
   saveMessage(
     @Param('m_id', BigIntPipe) m_id: bigint,
     @Query('is_save', ParseBoolPipe) is_save: boolean,

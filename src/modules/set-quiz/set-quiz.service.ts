@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  GoneException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -33,13 +34,16 @@ export class SetQuizService {
       throw new NotFoundException();
     }
 
-    return quizSet.map(
-      (q) =>
-        new QuizEntity({
-          id: q.q_id,
-          content: q.quiz.content,
-        }),
-    );
+    return {
+      deadline: quizSet.deadline,
+      quizList: quizSet.quizLists.map(
+        (q) =>
+          new QuizEntity({
+            id: q.q_id,
+            content: q.quiz.content,
+          }),
+      ),
+    };
   }
 
   /**
@@ -58,7 +62,12 @@ export class SetQuizService {
     created_at: Date,
     results: QuizResult[],
   ) {
-    await this.checkBeforeMark(m_id, created_at, results);
+    await this.checkBeforeMark(
+      m_id,
+      u_id,
+      created_at,
+      results,
+    );
 
     await this.setQuizRepository.mark(
       results.map((d) => ({
@@ -81,6 +90,7 @@ export class SetQuizService {
    */
   private async checkBeforeMark(
     m_id: bigint,
+    u_id: bigint,
     created_at: Date,
     data: QuizResult[],
   ) {
@@ -88,7 +98,7 @@ export class SetQuizService {
       await this.setQuizRepository.getDeadline(m_id);
 
     if (deadline < created_at) {
-      throw new ConflictException('deadline passed');
+      throw new GoneException('deadline passed');
     }
 
     const quizzes =
@@ -106,7 +116,11 @@ export class SetQuizService {
     });
 
     const result =
-      await this.setQuizRepository.getResultByMId(m_id);
+      await this.setQuizRepository.getResultByUId(
+        u_id,
+        m_id,
+      );
+
     if (result.length !== 0) {
       throw new ConflictException('quiz already marked');
     }
@@ -151,11 +165,19 @@ export class SetQuizService {
           m_id,
         );
 
-      if (previousQuizSet.length !== data.length) {
+      if (
+        previousQuizSet.quizLists.length !== data.length
+      ) {
         isSame = false;
       } else {
-        for (let i = 0; i < previousQuizSet.length; i++) {
-          if (previousQuizSet[i].q_id !== data[i]) {
+        for (
+          let i = 0;
+          i < previousQuizSet.quizLists.length;
+          i++
+        ) {
+          if (
+            previousQuizSet.quizLists[i].q_id !== data[i]
+          ) {
             isSame = false;
             break;
           }

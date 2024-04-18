@@ -13,7 +13,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Role } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 import { QuizFeedbackService } from './quiz-feedback.service';
 import { BigIntPipe } from '@common/pipes/bigint.pipe';
 import { ApiDefaultMetadata } from '@common/decorators/api-default.decorator';
@@ -55,7 +55,10 @@ export class QuizFeedbackController {
     'ユーザーのIDでクイズフィードバック取得に成功しました。',
     QuizFeedbackEntity,
   )
-  @UseRoleOrOwnerGuards([Role.ADMIN], 'QuizFeedback')
+  @UseRoleOrOwnerGuards(
+    [Role.ADMIN],
+    Prisma.ModelName.QuizFeedback,
+  )
   @Get('user/:u_id')
   getFeedback(
     @Param('u_id', BigIntPipe) u_id: bigint,
