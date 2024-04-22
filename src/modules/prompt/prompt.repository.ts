@@ -80,4 +80,16 @@ export class PromptRepository {
       },
     });
   }
+
+  isExist(u_id: bigint, c_id: bigint, m_id: bigint) {
+    return this.prisma.prompt.findFirst({
+      where: {
+        m_id,
+        class_user: {
+          u_id,
+          c_id,
+        },
+      },
+    });
+  }
 }

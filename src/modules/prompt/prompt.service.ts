@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -38,6 +39,20 @@ export class PromptService {
     c_id: bigint,
     m_id: bigint,
   ) {
+    const isExist = await this.promptRepository.isExist(
+      u_id,
+      c_id,
+      m_id,
+    );
+
+    if (isExist) {
+      throw new ConflictException(
+        'the prompt already exists',
+      );
+    }
+
+    // TODO: 해당 자료가 class에 속해있는지 확인
+
     const prompt = await this.promptRepository.create(
       u_id,
       c_id,

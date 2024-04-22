@@ -89,6 +89,10 @@ export class OwnerGuard implements CanActivate {
           u_id: BigInt(resourceinfo['u_id']),
           s_id: BigInt(resourceinfo['m_id']),
         });
+      case Prisma.ModelName.QuizBank:
+        return await findResource({
+          id: BigInt(resourceinfo['id']),
+        });
       default:
         return null;
     }
