@@ -80,6 +80,7 @@ model FileFeedback {
   content     String
   created_at  DateTime?     @default(now())
   f_id        BigInt
+  is_saved    Boolean       @default(false)
 
   file        File          @relation(fields: [f_id], references: [f_id], onDelete: Cascade)
 }

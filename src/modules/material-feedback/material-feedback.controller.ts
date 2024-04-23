@@ -20,6 +20,10 @@ import { Response } from 'express';
 import { KeywordEntity } from './entity/keyword.entity';
 import { CreateMaterialFeedbackDto } from './dto/create.dto';
 import { MaterialFeedBackEntity } from './entity/feedback.entity';
+import {
+  FeedbackType,
+  FeedbackTypePipe,
+} from '@common/pipes/feedback-type.pipe';
 
 @ApiDefaultMetadata('MaterialFeedbacks')
 @Controller('feedback/materials/:m_id')
@@ -64,6 +68,18 @@ export class MaterialFeedbackController {
 
   @ApiResponseWithBody(
     HttpStatus.OK,
+    '参照データの有無を確認',
+    '参照データの有無を確認に成功しました。',
+    Boolean,
+  )
+  @UseRoleGuards([Role.ADMIN])
+  @Get('check-refer')
+  checkRefer(@Param('m_id', BigIntPipe) m_id: bigint) {
+    return this.materialFeedbackService.checkRefer(m_id);
+  }
+
+  @ApiResponseWithBody(
+    HttpStatus.OK,
     'フィードバックをストリーミングを通じて取得',
     'フィードバックの取得に成功しました。',
   )
@@ -71,10 +87,12 @@ export class MaterialFeedbackController {
   @Get('get-feedback')
   async getFeedback(
     @Param('m_id', BigIntPipe) m_id: bigint,
+    @Query('type', FeedbackTypePipe) type: FeedbackType,
     @Res() response: Response,
   ) {
     await this.materialFeedbackService.getFeedback(
       m_id,
+      type,
       response,
     );
     response.end();

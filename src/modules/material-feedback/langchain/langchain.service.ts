@@ -153,7 +153,7 @@ export class LangchainService {
     } else {
       const prompt = PromptTemplate.fromTemplate(
         `You're an assistant giving feedback on a specific document. In the document below, you'll need to tell us in detail which pages and which parts of the document need to be fixed, whether it's the overall flow or the content.
-        Only tell us about the pages that need fixing.
+        Only tell us about the pages that need fixing. Please answer in the same language as the material.
       {material}`,
       );
 

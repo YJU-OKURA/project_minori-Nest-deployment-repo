@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -7,6 +8,11 @@ import { ReferRepository } from '@modules/refer/refer.repository';
 import { LangchainService } from './langchain/langchain.service';
 import { FileService } from '../file/file.service';
 import { Response } from 'express';
+import { FeedbackType } from '@common/pipes/feedback-type.pipe';
+
+export const FEEDBACK_RECEIVED__COUNT = 10;
+
+export const VALUE_FOR_RECEIVED_COUNT = 'feedback';
 
 @Injectable()
 export class MaterialFeedbackService {
@@ -60,7 +66,13 @@ export class MaterialFeedbackService {
    * @param response - レスポンスオブジェクト
    * @returns - なし
    */
-  async getFeedback(m_id: bigint, response: Response) {
+  async getFeedback(
+    m_id: bigint,
+    type: FeedbackType,
+    response: Response,
+  ) {
+    await this.checkBeforeFeedback(m_id);
+
     const [refers, filePathResult] = await Promise.all([
       this.getRefers(m_id),
       this.materialFeedbackRepository.getFilePath(m_id),
@@ -75,7 +87,7 @@ export class MaterialFeedbackService {
     const document =
       await this.langchainService.getDocument(file);
 
-    if (!refers) {
+    if (type === FeedbackType.ALL) {
       const allContents = document
         .map(
           (doc, i) =>
@@ -83,23 +95,28 @@ export class MaterialFeedbackService {
         )
         .join('\n\n');
 
-      return this.langchainService.materialFeedback(
+      await this.langchainService.materialFeedback(
         allContents,
         response,
       );
     } else {
+      if (!refers) {
+        throw new NotFoundException('No refer found');
+      }
+
       const [mostReferedPage, referedContents] =
         this.findMostRefer(refers);
 
       const pageContent = document[mostReferedPage - 1];
 
-      return this.langchainService.pageFeedback(
+      await this.langchainService.pageFeedback(
         mostReferedPage,
         pageContent,
         referedContents,
         response,
       );
     }
+    await this.materialFeedbackRepository.createCount(m_id);
   }
 
   /**
@@ -201,5 +218,33 @@ export class MaterialFeedbackService {
         contents: data.contents,
       })),
     );
+  }
+
+  /**
+   * フィードバックを受けた回数を確認
+   * @param m_id - マテリアルのID
+   */
+  private async checkBeforeFeedback(m_id: bigint) {
+    const feedbacks =
+      await this.materialFeedbackRepository.getRreceivedCount(
+        m_id,
+      );
+
+    if (feedbacks >= FEEDBACK_RECEIVED__COUNT) {
+      throw new BadRequestException(
+        `The maximum number of times you can receive feedback is ${FEEDBACK_RECEIVED__COUNT}.`,
+      );
+    }
+  }
+
+  /**
+   * 参照データが存在するか確認
+   * @param m_id - マテリアルのID
+   * @returns - 参照データが存在するかどうか
+   */
+  async checkRefer(m_id: bigint) {
+    const refers = await this.getRefers(m_id);
+
+    return refers ? true : false;
   }
 }
