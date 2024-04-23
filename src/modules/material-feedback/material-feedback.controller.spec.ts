@@ -4,6 +4,7 @@ import { MaterialFeedbackService } from './material-feedback.service';
 import { Response } from 'express';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { ClassUserModule } from '@modules/class-user/class-user.module';
+import { FeedbackType } from '@common/pipes/feedback-type.pipe';
 
 describe('MaterialFeedbackController', () => {
   let controller: MaterialFeedbackController;
@@ -58,6 +59,12 @@ describe('MaterialFeedbackController', () => {
         return Promise.reject(new Error('Error'));
       }
       return Promise.resolve('remove success');
+    }),
+    checkRefer: jest.fn().mockImplementation((m_id) => {
+      if (!m_id) {
+        return Promise.reject(new Error('Error'));
+      }
+      return Promise.resolve(true);
     }),
   };
 
@@ -156,14 +163,22 @@ describe('MaterialFeedbackController', () => {
     it('should return success on success', async () => {
       const response = mockResponse();
       await expect(
-        controller.getFeedback(BigInt(1), response),
+        controller.getFeedback(
+          BigInt(1),
+          FeedbackType.ALL,
+          response,
+        ),
       ).resolves.toEqual(undefined);
     });
 
     it('should throw an error if parameters are missing', async () => {
       const response = mockResponse();
       await expect(
-        controller.getFeedback(null, response),
+        controller.getFeedback(
+          null,
+          FeedbackType.ALL,
+          response,
+        ),
       ).rejects.toThrow('Error');
     });
   });
@@ -196,6 +211,20 @@ describe('MaterialFeedbackController', () => {
       await expect(controller.remove(null)).rejects.toThrow(
         'Error',
       );
+    });
+  });
+
+  describe('checkRefer', () => {
+    it('should return true on success', async () => {
+      await expect(
+        controller.checkRefer(BigInt(1)),
+      ).resolves.toBe(true);
+    });
+
+    it('should throw an error if m_id is missing', async () => {
+      await expect(
+        controller.checkRefer(null),
+      ).rejects.toThrow('Error');
     });
   });
 });
