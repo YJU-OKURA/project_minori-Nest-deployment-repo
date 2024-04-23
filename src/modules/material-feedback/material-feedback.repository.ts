@@ -1,5 +1,6 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { VALUE_FOR_RECEIVED_COUNT } from './material-feedback.service';
 
 @Injectable()
 export class MaterialFeedbackRepository {
@@ -9,6 +10,7 @@ export class MaterialFeedbackRepository {
     return this.prisma.fileFeedback.findMany({
       where: {
         f_id: m_id,
+        is_saved: true,
       },
       skip: (page - 1) * limit,
       take: limit,
@@ -27,6 +29,7 @@ export class MaterialFeedbackRepository {
       data: {
         f_id: m_id,
         content,
+        is_saved: true,
       },
       select: {
         id: true,
@@ -36,9 +39,12 @@ export class MaterialFeedbackRepository {
   }
 
   remove(id: bigint) {
-    return this.prisma.fileFeedback.delete({
+    return this.prisma.fileFeedback.update({
       where: {
         id,
+      },
+      data: {
+        is_saved: false,
       },
     });
   }
@@ -50,6 +56,24 @@ export class MaterialFeedbackRepository {
       },
       select: {
         m_path: true,
+      },
+    });
+  }
+
+  createCount(m_id: bigint) {
+    return this.prisma.fileFeedback.create({
+      data: {
+        f_id: m_id,
+        content: VALUE_FOR_RECEIVED_COUNT,
+      },
+    });
+  }
+
+  getRreceivedCount(m_id: bigint) {
+    return this.prisma.fileFeedback.count({
+      where: {
+        f_id: m_id,
+        is_saved: false,
       },
     });
   }
