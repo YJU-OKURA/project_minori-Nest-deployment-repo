@@ -6,7 +6,7 @@ export const FeedbackExamples = {
 
 export const pageFeedbackExamples = [
   {
-    input: `${FeedbackExamples.MATERIAL}: "10 페이지의 내용 - 구글, 앤스로픽에 20억 달러 투자
+    input: `- ${FeedbackExamples.MATERIAL}: "10 페이지의 내용 - 구글, 앤스로픽에 20억 달러 투자
   n 구글이 앤스로픽에 최대 20억 달러 투자에 합의하고 5억 달러를 우선 투자
   n 3대 클라우드 사업자인 구글, 마이크로소프트, 아마존은 앤스로픽 및 오픈AI와 협력 확대
   KEY Contents
@@ -18,7 +18,7 @@ export const pageFeedbackExamples = [
   ☞ 출처 : The Wall Street Journal, Google Commits $2 Billion in Funding to AI Startup Anthropic, 2023.10.27.
   Bloomberg, AI Startup Anthropic to Use Google Chips in Expanded Partnership, 2023.11.09."
   
-  ${FeedbackExamples.PART_RELEVANT_TO_THE_QUESTIONS}: "
+  - ${FeedbackExamples.PART_RELEVANT_TO_THE_QUESTIONS}: "
 ∙ 구글은 챗GPT의 기반 기술과 직접 경쟁할 수 있는 차세대 LLM ‘제미니(Gemini)’를 포함한 자체 AI
 ∙ 구글은 2023년 2월 앤스로픽에 이미 5억 5,000만 달러를 투자 ∙
 n구글이 앤스로픽에 최대 20억 달러 투자에 합의하고 5억 달러를 우선 투자 ∙
