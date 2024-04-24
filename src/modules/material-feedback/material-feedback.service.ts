@@ -10,7 +10,7 @@ import { FileService } from '../file/file.service';
 import { Response } from 'express';
 import { FeedbackType } from '@common/pipes/feedback-type.pipe';
 
-export const FEEDBACK_RECEIVED__COUNT = 10;
+export const FEEDBACK_RECEIVED__COUNT = 20;
 
 export const VALUE_FOR_RECEIVED_COUNT = 'feedback';
 
@@ -246,5 +246,18 @@ export class MaterialFeedbackService {
     const refers = await this.getRefers(m_id);
 
     return refers ? true : false;
+  }
+
+  /**
+   * フィードバックを受けられる回数を取得
+   * @param m_id - マテリアルのID
+   * @returns - フィードバックを受けた回数
+   */
+  async getRemainingFeedbackCounts(m_id: bigint) {
+    const feedbacks =
+      await this.materialFeedbackRepository.getRreceivedCount(
+        m_id,
+      );
+    return FEEDBACK_RECEIVED__COUNT - feedbacks;
   }
 }

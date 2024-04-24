@@ -126,4 +126,20 @@ export class MaterialFeedbackController {
   remove(@Param('m_id', BigIntPipe) m_id: bigint) {
     return this.materialFeedbackService.remove(m_id);
   }
+
+  @ApiResponseWithBody(
+    HttpStatus.OK,
+    '受信できるフィードバックの数',
+    '受信できるフィードバックの数を取得しました。',
+    Number,
+  )
+  @UseRoleGuards([Role.ADMIN])
+  @Get('get-remaining-feedback-counts')
+  getRemainingFeedbackCounts(
+    @Param('m_id', BigIntPipe) m_id: bigint,
+  ) {
+    return this.materialFeedbackService.getRemainingFeedbackCounts(
+      m_id,
+    );
+  }
 }

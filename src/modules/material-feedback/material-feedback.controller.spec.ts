@@ -66,6 +66,14 @@ describe('MaterialFeedbackController', () => {
       }
       return Promise.resolve(true);
     }),
+    getRemainingFeedbackCounts: jest
+      .fn()
+      .mockImplementation((m_id: bigint) => {
+        if (!m_id) {
+          return Promise.reject(new Error('Error'));
+        }
+        return Promise.resolve(10);
+      }),
   };
 
   beforeEach(async () => {
@@ -224,6 +232,20 @@ describe('MaterialFeedbackController', () => {
     it('should throw an error if m_id is missing', async () => {
       await expect(
         controller.checkRefer(null),
+      ).rejects.toThrow('Error');
+    });
+  });
+
+  describe('getRemainingFeedbackCounts', () => {
+    it('should return remaining feedback counts on success', async () => {
+      await expect(
+        controller.getRemainingFeedbackCounts(BigInt(1)),
+      ).resolves.toEqual(10);
+    });
+
+    it('should throw an error if m_id is missing', async () => {
+      await expect(
+        controller.getRemainingFeedbackCounts(null),
       ).rejects.toThrow('Error');
     });
   });
