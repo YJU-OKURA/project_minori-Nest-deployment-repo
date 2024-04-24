@@ -134,7 +134,7 @@ export class MaterialFeedbackController {
     Number,
   )
   @UseRoleGuards([Role.ADMIN])
-  @Get('get-feedback-counts-remaining')
+  @Get('get-remaining-feedback-counts')
   getRemainingFeedbackCounts(
     @Param('m_id', BigIntPipe) m_id: bigint,
   ) {
