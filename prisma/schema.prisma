@@ -16,6 +16,7 @@ enum Role {
   ASSISTANT
   APPLICANT
   BLACKLIST
+  INVITE
 }
 
 model ClassUser {
