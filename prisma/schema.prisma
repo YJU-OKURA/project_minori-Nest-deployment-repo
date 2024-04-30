@@ -19,8 +19,8 @@ enum Role {
 }
 
 model ClassUser {
-  u_id         BigInt
-  c_id         BigInt
+  u_id         BigInt       @map("uid")
+  c_id         BigInt       @map("cid")
   nickname     String       @db.VarChar(50)
   is_favorite  Boolean      @default(false)
 
