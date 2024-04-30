@@ -57,7 +57,6 @@ export class MaterialRepository {
 
   create(
     name: string,
-    u_id: bigint,
     c_id: bigint,
     m_path: string,
     v_path: string,
@@ -71,12 +70,9 @@ export class MaterialRepository {
             v_path,
           },
         },
-        class_user: {
+        class: {
           connect: {
-            u_id_c_id: {
-              u_id,
-              c_id,
-            },
+            id: c_id,
           },
         },
       },

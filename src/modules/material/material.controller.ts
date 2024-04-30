@@ -101,7 +101,6 @@ export class MaterialController {
   @Post()
   @UseRoleGuards([Role.ADMIN])
   create(
-    @User() u_id: bigint,
     @Body() body: CreateMaterialDto,
     @Param('c_id', BigIntPipe) c_id: bigint,
     @UploadedFile(new FileValidationPipe())
@@ -109,7 +108,6 @@ export class MaterialController {
   ): Promise<string> {
     return this.materialService.create(
       body.name,
-      u_id,
       c_id,
       file,
     );
