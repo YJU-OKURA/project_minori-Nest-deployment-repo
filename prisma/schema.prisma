@@ -25,14 +25,19 @@ model ClassUser {
   is_favorite  Boolean      @default(false)
 
   role         Role         @default(USER)
-  materials    Material[]
   prompts      Prompt[]
   class_user_quizs ClassUserQuiz[]
   quizFeedbacks QuizFeedback[]
   quizBanks    QuizBank[]
+  class_code   ClassCode[]
+  class_board  ClassBoard[]
+  attendances  Attendance[]
 
+  user         User         @relation(fields: [u_id], references: [id], onDelete: Cascade)
+  class        Class        @relation(fields: [c_id], references: [id], onDelete: Cascade)
 
   @@id([u_id, c_id])
+  @@map("class_users")
 }
 
 model Material {
@@ -46,9 +51,8 @@ model Material {
   prompts     Prompt[]
   quizs       Quiz[]
 
-  u_id        BigInt?
   c_id        BigInt
-  class_user  ClassUser?    @relation(fields: [u_id, c_id], references: [u_id, c_id])
+  class       Class         @relation(fields: [c_id], references: [id], onDelete: Cascade)
 }
 
 model File {
@@ -190,4 +194,93 @@ model QuizBank {
   u_id        BigInt
   c_id        BigInt
   class_user  ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+}
+
+model Class {
+  id          BigInt        @id @default(autoincrement())
+  name        String        @db.VarChar(30)
+  u_id        BigInt        @map("uid")
+  user        User          @relation(fields: [u_id], references: [id], onDelete: Cascade)
+
+  classUsers  ClassUser[]
+  materials   Material[]
+  classSchedules ClassSchedule[]
+
+  @@map("classes")
+}
+
+model User {
+  id          BigInt        @id @default(autoincrement())
+  name        String        @db.VarChar(50)
+  image       String
+  created_at  DateTime      @default(now())
+  p_id        BigInt
+
+  classes     Class[]
+  classUsers  ClassUser[]
+
+  @@map("users")
+}
+
+model ClassCode {
+  id          BigInt        @id @default(autoincrement())
+  code        String        @unique
+  secret      String?
+
+  c_id        BigInt        @map("cid")
+  u_id        BigInt        @map("uid")
+  classUser   ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+
+  @@map("class_codes")
+}
+
+model ClassBoard {
+  id           BigInt        @id @default(autoincrement())
+  title        String
+  content      String
+  image        String
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  is_announced Boolean       @default(false)
+
+  c_id         BigInt        @map("cid")
+  u_id         BigInt        @map("uid")
+  classUser    ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+
+  @@map("class_boards")
+}
+
+model ClassSchedule {
+  id          BigInt        @id @default(autoincrement())
+  title       String
+  started_at  DateTime
+  ended_at    DateTime
+  is_live     Boolean       @default(false)
+
+  c_id        BigInt        @map("cid")
+  class       Class         @relation(fields: [c_id], references: [id], onDelete: Cascade)
+
+  attendances Attendance[]
+
+  @@map("class_schedules")
+}
+
+enum AttendanceType {
+  ATTENDANCE
+  TARDY
+  ABSENCE
+}
+
+model Attendance {
+  id             BigInt          @id @default(autoincrement())
+  is_attendance  AttendanceType  @default(ABSENCE)
+
+  u_id           BigInt          @map("uid")
+  c_id           BigInt          @map("cid")
+  class_user     ClassUser       @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+
+  cs_id          BigInt          @map("csid")
+  class_schedule ClassSchedule   @relation(fields: [cs_id], references: [id], onDelete: Cascade)
+
+  @@map("attendances")
 }
