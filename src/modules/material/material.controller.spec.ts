@@ -53,8 +53,8 @@ describe('MaterialController', () => {
         }),
       create: jest
         .fn()
-        .mockImplementation((name, u_id, c_id, file) => {
-          if (!name || !u_id || !c_id || !file) {
+        .mockImplementation((name, c_id, file) => {
+          if (!name || !c_id || !file) {
             return Promise.reject(new Error('Error'));
           }
           return Promise.resolve('create success');
@@ -133,16 +133,13 @@ describe('MaterialController', () => {
 
   it('should create a new material', async () => {
     const c_id = 1n;
-    const u_id = 1n;
     const created = await controller.create(
-      u_id,
       { name: 'Test Material', file: mockFile },
       c_id,
       mockFile,
     );
     expect(service.create).toHaveBeenCalledWith(
       'Test Material',
-      u_id,
       c_id,
       mockFile,
     );
@@ -190,9 +187,7 @@ describe('MaterialController', () => {
   it('should fail to create a new material when service returns error', async () => {
     try {
       const c_id = null;
-      const u_id = 1n;
       await controller.create(
-        u_id,
         { name: 'Test Material', file: mockFile },
         c_id,
         mockFile,

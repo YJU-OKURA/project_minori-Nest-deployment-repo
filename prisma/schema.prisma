@@ -16,23 +16,29 @@ enum Role {
   ASSISTANT
   APPLICANT
   BLACKLIST
+  INVITE
 }
 
 model ClassUser {
-  u_id         BigInt
-  c_id         BigInt
+  u_id         BigInt       @map("uid")
+  c_id         BigInt       @map("cid")
   nickname     String       @db.VarChar(50)
   is_favorite  Boolean      @default(false)
 
   role         Role         @default(USER)
-  materials    Material[]
   prompts      Prompt[]
   class_user_quizs ClassUserQuiz[]
   quizFeedbacks QuizFeedback[]
   quizBanks    QuizBank[]
+  class_code   ClassCode[]
+  class_board  ClassBoard[]
+  attendances  Attendance[]
 
+  user         User         @relation(fields: [u_id], references: [id], onDelete: Cascade)
+  class        Class        @relation(fields: [c_id], references: [id], onDelete: Cascade)
 
   @@id([u_id, c_id])
+  @@map("class_users")
 }
 
 model Material {
@@ -46,9 +52,10 @@ model Material {
   prompts     Prompt[]
   quizs       Quiz[]
 
-  u_id        BigInt?
-  c_id        BigInt
-  class_user  ClassUser?    @relation(fields: [u_id, c_id], references: [u_id, c_id])
+  c_id        BigInt        @map("cid")
+  class       Class         @relation(fields: [c_id], references: [id], onDelete: Cascade)
+
+  @@map("materials")
 }
 
 model File {
@@ -58,8 +65,10 @@ model File {
   refers      Refer[]
   feedbacks   FileFeedback[]
 
-  f_id        BigInt        @id
+  f_id        BigInt        @id @map("fid")
   material    Material      @relation(fields: [f_id], references: [id], onDelete: Cascade)
+
+  @@map("files")
 }
 
 model Refer {
@@ -68,21 +77,25 @@ model Refer {
   content     String
   created_at  DateTime      @default(now())
 
-  f_id        BigInt
+  f_id        BigInt        @map("fid")
   file        File          @relation(fields: [f_id], references: [f_id], onDelete: Cascade)
   
-  p_id        BigInt
+  p_id        BigInt        @map("pid")
   prompt      Prompt        @relation(fields: [p_id], references: [id], onDelete: Cascade)
+
+  @@map("refers")
 }
 
 model FileFeedback {
   id          BigInt        @id @default(autoincrement())
   content     String
   created_at  DateTime?     @default(now())
-  f_id        BigInt
+  f_id        BigInt        @map("fid")
   is_saved    Boolean       @default(false)
 
   file        File          @relation(fields: [f_id], references: [f_id], onDelete: Cascade)
+
+  @@map("file_feedbacks")
 }
 
 model Prompt {
@@ -94,12 +107,14 @@ model Prompt {
   messages    Message[]
   refers      Refer[]
 
-  m_id        BigInt
+  m_id        BigInt        @map("mid")
   material    Material      @relation(fields: [m_id], references: [id], onDelete: Cascade)
 
-  u_id        BigInt
-  c_id        BigInt
+  u_id        BigInt        @map("uid")
+  c_id        BigInt        @map("cid")
   class_user  ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+
+  @@map("prompts")
 }
 
 model Message {
@@ -109,8 +124,10 @@ model Message {
   created_at  DateTime      @default(now())
   is_save     Boolean       @default(false)
   
-  p_id        BigInt
+  p_id        BigInt        @map("pid")
   prompt      Prompt        @relation(fields: [p_id], references: [id], onDelete: Cascade)
+
+  @@map("messages")
 }
 
 model Quiz {
@@ -120,8 +137,10 @@ model Quiz {
 
   quizLists             QuizList[]
 
-  m_id        BigInt
+  m_id        BigInt        @map("mid")
   material    Material      @relation(fields: [m_id], references: [id], onDelete: Cascade)
+
+  @@map("quizzes")
 }
 
 model ClassUserQuiz {
@@ -129,15 +148,17 @@ model ClassUserQuiz {
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
 
-  u_id        BigInt
-  c_id        BigInt
+  u_id        BigInt        @map("uid")
+  c_id        BigInt        @map("cid")
   class_user  ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
 
-  q_id        BigInt
-  s_id        BigInt
+  q_id        BigInt        @map("qid")
+  s_id        BigInt        @map("sid")
   quizList    QuizList      @relation(fields: [q_id, s_id], references: [q_id, s_id], onDelete: Cascade)
   
   @@id([u_id, c_id, q_id, s_id])
+
+  @@map("class_user_quizzes")
 }
 
 model SetQuiz {
@@ -149,8 +170,10 @@ model SetQuiz {
 
   quizLists            QuizList[]
 
-  m_id        BigInt        @id
+  m_id        BigInt        @id @map("mid")
   material    Material      @relation(fields: [m_id], references: [id], onDelete: Cascade)
+
+  @@map("set_quizzes")
 }
 
 model QuizFeedback {
@@ -158,26 +181,30 @@ model QuizFeedback {
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
 
-  u_id        BigInt
-  c_id        BigInt
+  u_id        BigInt        @map("uid")
+  c_id        BigInt        @map("cid")
   class_user  ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
 
-  s_id        BigInt
+  s_id        BigInt        @map("sid")
   setQuiz     SetQuiz       @relation(fields: [s_id], references: [m_id], onDelete: Cascade)
 
   @@id([u_id, c_id, s_id])
+
+  @@map("quiz_feedbacks")
 }
 
 model QuizList {
   classUserQuizs ClassUserQuiz[]
 
-  q_id        BigInt
+  q_id        BigInt    @map("qid")
   quiz        Quiz      @relation(fields: [q_id], references: [id], onDelete: Cascade)
 
-  s_id        BigInt
+  s_id        BigInt    @map("sid")
   setQuiz     SetQuiz   @relation(fields: [s_id], references: [m_id], onDelete: Cascade)
 
   @@id([q_id, s_id])
+  
+  @@map("quiz_lists")
 }
 
 model QuizBank {
@@ -187,7 +214,98 @@ model QuizBank {
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
 
-  u_id        BigInt
-  c_id        BigInt
+  u_id        BigInt        @map("uid")
+  c_id        BigInt        @map("cid")
   class_user  ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+
+  @@map("quiz_banks")
+}
+
+model Class {
+  id          BigInt        @id @default(autoincrement())
+  name        String        @db.VarChar(30)
+  u_id        BigInt        @map("uid")
+  user        User          @relation(fields: [u_id], references: [id], onDelete: Cascade)
+
+  classUsers  ClassUser[]
+  materials   Material[]
+  classSchedules ClassSchedule[]
+
+  @@map("classes")
+}
+
+model User {
+  id          BigInt        @id @default(autoincrement())
+  name        String        @db.VarChar(50)
+  image       String
+  created_at  DateTime      @default(now())
+  p_id        BigInt
+
+  classes     Class[]
+  classUsers  ClassUser[]
+
+  @@map("users")
+}
+
+model ClassCode {
+  id          BigInt        @id @default(autoincrement())
+  code        String        @unique
+  secret      String?
+
+  c_id        BigInt        @map("cid")
+  u_id        BigInt        @map("uid")
+  classUser   ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+
+  @@map("class_codes")
+}
+
+model ClassBoard {
+  id           BigInt        @id @default(autoincrement())
+  title        String
+  content      String
+  image        String
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  is_announced Boolean       @default(false)
+
+  c_id         BigInt        @map("cid")
+  u_id         BigInt        @map("uid")
+  classUser    ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+
+  @@map("class_boards")
+}
+
+model ClassSchedule {
+  id          BigInt        @id @default(autoincrement())
+  title       String
+  started_at  DateTime
+  ended_at    DateTime
+  is_live     Boolean       @default(false)
+
+  c_id        BigInt        @map("cid")
+  class       Class         @relation(fields: [c_id], references: [id], onDelete: Cascade)
+
+  attendances Attendance[]
+
+  @@map("class_schedules")
+}
+
+enum AttendanceType {
+  ATTENDANCE
+  TARDY
+  ABSENCE
+}
+
+model Attendance {
+  id             BigInt          @id @default(autoincrement())
+  is_attendance  AttendanceType  @default(ABSENCE)
+
+  u_id           BigInt          @map("uid")
+  c_id           BigInt          @map("cid")
+  class_user     ClassUser       @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+
+  cs_id          BigInt          @map("csid")
+  class_schedule ClassSchedule   @relation(fields: [cs_id], references: [id], onDelete: Cascade)
+
+  @@map("attendances")
 }

@@ -63,14 +63,12 @@ export class MaterialService {
   /**
    * マテリアルを作成
    * @param name - マテリアルの名前
-   * @param u_id - ユーザーID
    * @param c_id - クラスID
    * @param file - アップロードするファイル
    * @returns - Success message
    */
   async create(
     name: string,
-    u_id: bigint,
     c_id: bigint,
     file: Express.Multer.File,
   ): Promise<string> {
@@ -78,7 +76,6 @@ export class MaterialService {
       await this.uploadAndVectorize(String(c_id), file);
     await this.materialRepository.create(
       name,
-      u_id,
       c_id,
       m_path,
       v_path,
