@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { QuizBankRepository } from './quiz-bank.repository';
 import { QuizContent } from '@modules/quiz/dto/create-update.dto';
 import { QuizEntity } from '@modules/quiz/entity/quiz.entity';
@@ -24,20 +27,13 @@ export class QuizBankService {
 
   /**
    * クイズバンク一覧を取得
-   * @param c_id - クラスID
    * @param u_id - ユーザーID
    * @param page - ページ番号
    * @param limit - 1ページあたりのアイテム数
    * @returns - クイズバンク一覧
    */
-  async getMany(
-    c_id: bigint,
-    u_id: bigint,
-    page: number,
-    limit: number,
-  ) {
+  async getMany(u_id: bigint, page: number, limit: number) {
     const data = await this.quizBankRepository.findMany(
-      c_id,
       u_id,
       page,
       limit,
@@ -54,7 +50,6 @@ export class QuizBankService {
 
   /**
    * クイズバンクを検索
-   * @param c_id - クラスID
    * @param u_id - ユーザーID
    * @param page - ページ番号
    * @param limit - 1ページあたりのアイテム数
@@ -62,14 +57,12 @@ export class QuizBankService {
    * @returns - クイズバンク
    */
   async search(
-    c_id: bigint,
     u_id: bigint,
     page: number,
     limit: number,
     keyword: string,
   ) {
     const data = await this.quizBankRepository.search(
-      c_id,
       u_id,
       page,
       limit,
@@ -92,13 +85,19 @@ export class QuizBankService {
    * @param content - クイズの内容
    * @returns - クイズバンク作成成功メッセージ
    */
-  async create(
-    c_id: bigint,
-    u_id: bigint,
-    content: QuizContent,
-  ) {
-    await this.quizBankRepository.create(
+  async create(c_id: bigint, u_id: bigint, q_id: bigint) {
+    const quiz = await this.quizBankRepository.getQuiz(
+      q_id,
       c_id,
+    );
+
+    if (!quiz) {
+      throw new NotFoundException('Quiz not found');
+    }
+
+    const content = JSON.parse(quiz.content as string);
+
+    await this.quizBankRepository.create(
       u_id,
       content.question,
       JSON.stringify(content),
