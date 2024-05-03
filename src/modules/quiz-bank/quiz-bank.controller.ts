@@ -23,7 +23,7 @@ import { UseRoleGuards } from '@common/decorators/use-role-guards.decorator';
 import { CreateQuizBankDto } from './dto/create.dto';
 
 @ApiDefaultMetadata('QuizBanks')
-@Controller('quiz-banks')
+@Controller('api/nest/quiz-banks')
 export class QuizBankController {
   constructor(
     private readonly quizBankService: QuizBankService,
@@ -36,7 +36,6 @@ export class QuizBankController {
     QuizBankEntity,
     true,
   )
-  @UseRoleGuards([Role.ADMIN])
   @Get('search')
   search(
     @User() u_id: bigint,
@@ -59,7 +58,6 @@ export class QuizBankController {
     QuizBankEntity,
   )
   @UseOwnerGuards(Prisma.ModelName.QuizBank)
-  @UseRoleGuards([Role.ADMIN])
   @Get(':id')
   get(@Param('id', BigIntPipe) id: bigint) {
     return this.quizBankService.get(id);
@@ -72,7 +70,6 @@ export class QuizBankController {
     QuizBankEntity,
     true,
   )
-  @UseRoleGuards([Role.ADMIN])
   @Get()
   getMany(
     @User() u_id: bigint,
@@ -109,7 +106,6 @@ export class QuizBankController {
     String,
   )
   @UseOwnerGuards(Prisma.ModelName.QuizBank)
-  @UseRoleGuards([Role.ADMIN])
   @Patch(':id')
   update(
     @Param('id', BigIntPipe) id: bigint,
@@ -125,7 +121,6 @@ export class QuizBankController {
     String,
   )
   @UseOwnerGuards(Prisma.ModelName.QuizBank)
-  @UseRoleGuards([Role.ADMIN])
   @Delete(':id')
   remove(@Param('id', BigIntPipe) id: bigint) {
     return this.quizBankService.remove(id);
