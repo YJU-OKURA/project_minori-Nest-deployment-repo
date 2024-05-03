@@ -4,6 +4,7 @@ import { winstonLogger } from './common/utils/winston.util';
 import { swagger } from './common/utils/swagger.util';
 import {
   ClassSerializerInterceptor,
+  RequestMethod,
   ValidationPipe,
 } from '@nestjs/common';
 import { BigIntInterceptor } from '@common/interceptors/bigint.interceptor';
@@ -12,7 +13,15 @@ import { ResponseInterceptor } from '@common/interceptors/response.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix('api/nest/class/:c_id');
+  app.setGlobalPrefix('api/nest/class/:c_id', {
+    exclude: [
+      'api/nest/quiz-banks/:id',
+      {
+        path: 'api/nest/quiz-banks',
+        method: RequestMethod.GET,
+      },
+    ],
+  });
   winstonLogger(app);
   swagger(app);
 
