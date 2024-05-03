@@ -1,12 +1,16 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { RolesGuard } from '@common/guards/role.guard';
-import { ApiForbiddenResponse } from '@nestjs/swagger';
+import {
+  ApiForbiddenResponse,
+  ApiParam,
+} from '@nestjs/swagger';
 import { Key, MetaData } from './metadata.decorator';
 
 export const UseRoleGuards = (
   role: Role[] = [Role.ADMIN, Role.USER, Role.ASSISTANT],
   description: string = undefined,
+  requiredCid: boolean = true,
 ) => {
   if (
     role.length == 1 &&
@@ -22,5 +26,9 @@ export const UseRoleGuards = (
       description:
         description || 'アクセスする権限がありません。',
     }),
+    requiredCid &&
+      ApiParam({
+        name: 'c_id',
+      }),
   );
 };
