@@ -29,7 +29,6 @@ model ClassUser {
   prompts      Prompt[]
   class_user_quizs ClassUserQuiz[]
   quizFeedbacks QuizFeedback[]
-  quizBanks    QuizBank[]
   class_code   ClassCode[]
   class_board  ClassBoard[]
   attendances  Attendance[]
@@ -215,8 +214,7 @@ model QuizBank {
   updated_at  DateTime      @updatedAt
 
   u_id        BigInt        @map("uid")
-  c_id        BigInt        @map("cid")
-  class_user  ClassUser     @relation(fields: [u_id, c_id], references: [u_id, c_id], onDelete: Cascade)
+  user        User          @relation(fields: [u_id], references: [id], onDelete: Cascade)
 
   @@map("quiz_banks")
 }
@@ -243,6 +241,7 @@ model User {
 
   classes     Class[]
   classUsers  ClassUser[]
+  quizBanks   QuizBank[]
 
   @@map("users")
 }
