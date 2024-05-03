@@ -28,11 +28,6 @@ export const swagger = (app: INestApplication) => {
       'Authorization',
     )
     .setVersion(swaggerConfig.version || '1.0')
-    .addGlobalParameters({
-      in: 'path',
-      required: true,
-      name: 'c_id',
-    })
     .build();
 
   const document = SwaggerModule.createDocument(

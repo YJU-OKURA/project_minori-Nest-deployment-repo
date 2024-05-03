@@ -20,9 +20,10 @@ import { User } from '@common/decorators/user.decorator';
 import { CreateUpdateQuizDto as CreateUpdateQuizBankDto } from '@modules/quiz/dto/create-update.dto';
 import { QuizEntity as QuizBankEntity } from '@modules/quiz/entity/quiz.entity';
 import { UseRoleGuards } from '@common/decorators/use-role-guards.decorator';
+import { CreateQuizBankDto } from './dto/create.dto';
 
 @ApiDefaultMetadata('QuizBanks')
-@Controller('quiz-banks')
+@Controller('api/nest/quiz-banks')
 export class QuizBankController {
   constructor(
     private readonly quizBankService: QuizBankService,
@@ -35,17 +36,14 @@ export class QuizBankController {
     QuizBankEntity,
     true,
   )
-  @UseRoleGuards([Role.ADMIN])
   @Get('search')
   search(
     @User() u_id: bigint,
-    @Param('c_id', BigIntPipe) c_id: bigint,
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
     @Query('keyword') keyword: string,
   ) {
     return this.quizBankService.search(
-      c_id,
       u_id,
       page,
       limit,
@@ -60,7 +58,6 @@ export class QuizBankController {
     QuizBankEntity,
   )
   @UseOwnerGuards(Prisma.ModelName.QuizBank)
-  @UseRoleGuards([Role.ADMIN])
   @Get(':id')
   get(@Param('id', BigIntPipe) id: bigint) {
     return this.quizBankService.get(id);
@@ -73,20 +70,13 @@ export class QuizBankController {
     QuizBankEntity,
     true,
   )
-  @UseRoleGuards([Role.ADMIN])
   @Get()
   getMany(
     @User() u_id: bigint,
-    @Param('c_id', BigIntPipe) c_id: bigint,
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
   ) {
-    return this.quizBankService.getMany(
-      c_id,
-      u_id,
-      page,
-      limit,
-    );
+    return this.quizBankService.getMany(u_id, page, limit);
   }
 
   @ApiResponseWithBody(
@@ -96,16 +86,16 @@ export class QuizBankController {
     String,
   )
   @UseRoleGuards([Role.ADMIN])
-  @Post('create')
+  @Post()
   create(
     @User() u_id: bigint,
     @Param('c_id', BigIntPipe) c_id: bigint,
-    @Body() body: CreateUpdateQuizBankDto,
+    @Body() body: CreateQuizBankDto,
   ) {
     return this.quizBankService.create(
       c_id,
       u_id,
-      body.content,
+      body.q_id,
     );
   }
 
@@ -116,8 +106,7 @@ export class QuizBankController {
     String,
   )
   @UseOwnerGuards(Prisma.ModelName.QuizBank)
-  @UseRoleGuards([Role.ADMIN])
-  @Patch('update/:id')
+  @Patch(':id')
   update(
     @Param('id', BigIntPipe) id: bigint,
     @Body() body: CreateUpdateQuizBankDto,
@@ -132,8 +121,7 @@ export class QuizBankController {
     String,
   )
   @UseOwnerGuards(Prisma.ModelName.QuizBank)
-  @UseRoleGuards([Role.ADMIN])
-  @Delete('remove/:id')
+  @Delete(':id')
   remove(@Param('id', BigIntPipe) id: bigint) {
     return this.quizBankService.remove(id);
   }

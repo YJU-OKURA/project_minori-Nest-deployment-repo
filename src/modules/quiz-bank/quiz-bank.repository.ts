@@ -16,18 +16,10 @@ export class QuizBankRepository {
     });
   }
 
-  findMany(
-    c_id: bigint,
-    u_id: bigint,
-    page: number,
-    limit: number,
-  ) {
+  findMany(u_id: bigint, page: number, limit: number) {
     return this.prisma.quizBank.findMany({
       where: {
-        class_user: {
-          c_id,
-          u_id,
-        },
+        u_id,
       },
       skip: (page - 1) * limit,
       take: limit,
@@ -42,7 +34,6 @@ export class QuizBankRepository {
   }
 
   search(
-    c_id: bigint,
     u_id: bigint,
     page: number,
     limit: number,
@@ -50,7 +41,6 @@ export class QuizBankRepository {
   ) {
     return this.prisma.quizBank.findMany({
       where: {
-        c_id,
         u_id,
         title: {
           contains: keyword,
@@ -69,14 +59,12 @@ export class QuizBankRepository {
   }
 
   create(
-    c_id: bigint,
     u_id: bigint,
     title: string,
     content: Prisma.JsonValue,
   ) {
     return this.prisma.quizBank.create({
       data: {
-        c_id,
         u_id,
         title,
         content,
@@ -98,6 +86,20 @@ export class QuizBankRepository {
   remove(id: bigint) {
     return this.prisma.quizBank.delete({
       where: { id },
+    });
+  }
+
+  getQuiz(id: bigint, c_id: bigint) {
+    return this.prisma.quiz.findUnique({
+      where: {
+        id,
+        material: {
+          c_id,
+        },
+      },
+      select: {
+        content: true,
+      },
     });
   }
 }

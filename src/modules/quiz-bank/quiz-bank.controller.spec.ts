@@ -17,19 +17,12 @@ describe('QuizBankController', () => {
         .fn()
         .mockImplementation(
           (
-            c_id: bigint,
             u_id: bigint,
             page: number,
             limit: number,
             keyword: string,
           ) => {
-            if (
-              !c_id ||
-              !u_id ||
-              !page ||
-              !limit ||
-              !keyword
-            ) {
+            if (!u_id || !page || !limit || !keyword) {
               return Promise.reject(new Error('Error'));
             }
             return Promise.resolve([
@@ -92,13 +85,8 @@ describe('QuizBankController', () => {
       getMany: jest
         .fn()
         .mockImplementation(
-          (
-            c_id: bigint,
-            u_id: bigint,
-            page: number,
-            limit: number,
-          ) => {
-            if (!c_id || !u_id || !page || !limit) {
+          (u_id: bigint, page: number, limit: number) => {
+            if (!u_id || !page || !limit) {
               return Promise.reject(new Error('Error'));
             }
             return Promise.resolve([
@@ -193,7 +181,6 @@ describe('QuizBankController', () => {
   it('should search quiz bank', async () => {
     const result = await controller.search(
       1n,
-      1n,
       1,
       2,
       'test',
@@ -236,7 +223,7 @@ describe('QuizBankController', () => {
 
   it('should fail to search quiz bank', async () => {
     await expect(
-      controller.search(0n, 0n, 0, 0, ''),
+      controller.search(0n, 0, 0, ''),
     ).rejects.toThrow('Error');
   });
 
@@ -267,7 +254,7 @@ describe('QuizBankController', () => {
   });
 
   it('should get many quiz', async () => {
-    const result = await controller.getMany(1n, 1n, 1, 2);
+    const result = await controller.getMany(1n, 1, 2);
     expect(result).toEqual([
       {
         id: 1,
@@ -306,32 +293,20 @@ describe('QuizBankController', () => {
 
   it('should fail to get many quiz', async () => {
     await expect(
-      controller.getMany(0n, 0n, 0, 0),
+      controller.getMany(0n, 0, 0),
     ).rejects.toThrow('Error');
   });
 
   it('should create quiz', async () => {
     const result = await controller.create(1n, 1n, {
-      content: {
-        question: 'test',
-        answer: {
-          a: 'test',
-          b: 'test',
-          c: 'test',
-          d: 'test',
-        },
-        commentary: {
-          correctAnswer: 'a',
-          content: 'test',
-        },
-      },
+      q_id: 1n,
     });
     expect(result).toBe('Success');
   });
 
   it('should fail to create quiz', async () => {
     await expect(
-      controller.create(0n, 0n, {} as CreateUpdateQuizDto),
+      controller.create(0n, 0n, { q_id: 0n }),
     ).rejects.toThrow('Error');
   });
 
