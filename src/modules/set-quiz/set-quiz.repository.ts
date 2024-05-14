@@ -28,6 +28,17 @@ export class SetQuizRepository {
   }
 
   getQuizzesByMId(m_id: bigint) {
+    return this.prisma.quiz.findMany({
+      where: {
+        m_id,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
+  getQuizSetsByMId(m_id: bigint) {
     return this.prisma.quizList.findMany({
       where: {
         s_id: m_id,
@@ -178,6 +189,14 @@ export class SetQuizRepository {
       },
       select: {
         deadline: true,
+      },
+    });
+  }
+
+  remove(m_id: bigint) {
+    return this.prisma.setQuiz.delete({
+      where: {
+        m_id,
       },
     });
   }
