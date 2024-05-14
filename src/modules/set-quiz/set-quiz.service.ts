@@ -102,7 +102,7 @@ export class SetQuizService {
     }
 
     const quizzes =
-      await this.setQuizRepository.getQuizzesByMId(m_id);
+      await this.setQuizRepository.getQuizSetsByMId(m_id);
 
     const quizIds = quizzes.map((q) => q.q_id);
 
@@ -148,7 +148,7 @@ export class SetQuizService {
     const quizzes =
       await this.setQuizRepository.getQuizzesByMId(m_id);
 
-    const quizIds = quizzes.map((q) => q.q_id);
+    const quizIds = quizzes.map((q) => q.id);
 
     data.forEach((q_id) => {
       if (!quizIds.find((id) => id === q_id)) {
@@ -404,5 +404,9 @@ export class SetQuizService {
         collectedRate: rate,
       };
     });
+  }
+
+  remove(m_id: bigint) {
+    return this.setQuizRepository.remove(m_id);
   }
 }
