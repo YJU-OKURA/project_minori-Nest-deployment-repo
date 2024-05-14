@@ -104,7 +104,7 @@ export class SetQuizService {
     const quizzes =
       await this.setQuizRepository.getQuizzesByMId(m_id);
 
-    const quizIds = quizzes.map((q) => q.id);
+    const quizIds = quizzes.map((q) => q.q_id);
 
     if (quizIds.length !== data.length) {
       throw new BadRequestException('quiz count mismatch');
@@ -148,7 +148,7 @@ export class SetQuizService {
     const quizzes =
       await this.setQuizRepository.getQuizzesByMId(m_id);
 
-    const quizIds = quizzes.map((q) => q.id);
+    const quizIds = quizzes.map((q) => q.q_id);
 
     data.forEach((q_id) => {
       if (!quizIds.find((id) => id === q_id)) {
