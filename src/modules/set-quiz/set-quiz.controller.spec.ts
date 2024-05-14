@@ -159,6 +159,14 @@ describe('SetQuizController', () => {
             });
           },
         ),
+      remove: jest
+        .fn()
+        .mockImplementation((m_id: bigint) => {
+          if (!m_id) {
+            return Promise.reject(new Error('Error'));
+          }
+          return Promise.resolve('remove success');
+        }),
     };
 
     const module: TestingModule =
@@ -369,5 +377,16 @@ describe('SetQuizController', () => {
     await expect(
       controller.getStatisticsClass(null, null),
     ).rejects.toThrow('Error');
+  });
+
+  it('should remove quiz', async () => {
+    const result = await controller.remove(1n);
+    expect(result).toBe('remove success');
+  });
+
+  it('should be failed to remove quiz', async () => {
+    await expect(controller.remove(null)).rejects.toThrow(
+      'Error',
+    );
   });
 });

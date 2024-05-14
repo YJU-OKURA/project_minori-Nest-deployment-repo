@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -187,5 +188,17 @@ export class SetQuizController {
       c_id,
       m_id,
     );
+  }
+
+  @ApiResponseWithBody(
+    HttpStatus.NO_CONTENT,
+    'クイズのセット削除',
+    'クイズのセット削除に成功しました。',
+    String,
+  )
+  @UseRoleGuards([Role.ADMIN])
+  @Delete()
+  remove(@Param('m_id', BigIntPipe) m_id: bigint) {
+    return this.setQuizService.remove(m_id);
   }
 }
