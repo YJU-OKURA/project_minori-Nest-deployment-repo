@@ -28,12 +28,12 @@ export class SetQuizRepository {
   }
 
   getQuizzesByMId(m_id: bigint) {
-    return this.prisma.quiz.findMany({
+    return this.prisma.quizList.findMany({
       where: {
-        m_id,
+        s_id: m_id,
       },
       select: {
-        id: true,
+        q_id: true,
       },
     });
   }
