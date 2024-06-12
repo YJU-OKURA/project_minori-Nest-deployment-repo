@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@modules/prisma/prisma.service';
-import { ClassUser } from '@prisma/client';
+import { ClassUser, Role } from '@prisma/client';
 
 @Injectable()
 export class ClassUserRepository {
@@ -41,12 +41,18 @@ export class ClassUserRepository {
     return this.prisma.classUser.findMany({
       where: {
         c_id,
+        role: Role.USER,
       },
       skip: page && (page - 1) * limit,
       take: limit && limit,
       select: {
         u_id: true,
         nickname: true,
+        user: {
+          select: {
+            image: true,
+          },
+        },
       },
       orderBy: {
         u_id: 'asc',
