@@ -34,6 +34,8 @@ export class QuizFeedbackService {
     if (!feedback) {
       throw new NotFoundException('Feedback not found');
     }
+
+    return feedback;
   }
 
   /**
