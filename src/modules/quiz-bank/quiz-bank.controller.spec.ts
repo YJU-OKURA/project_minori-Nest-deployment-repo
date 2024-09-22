@@ -1,9 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { QuizBankController } from './quiz-bank.controller';
-import {
-  CreateUpdateQuizDto,
-  QuizContent,
-} from '@modules/quiz/dto/create-update.dto';
+import { UpdateQuizDto as CreateUpdateQuizDto } from '@modules/quiz/dto/create-update.dto';
 import { ClassUserModule } from '@modules/class-user/class-user.module';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { QuizBankService } from './quiz-bank.service';

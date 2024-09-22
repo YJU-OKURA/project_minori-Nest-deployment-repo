@@ -17,7 +17,7 @@ import { BigIntPipe } from '@common/pipes/bigint.pipe';
 import { UseOwnerGuards } from '@common/decorators/use-owner-guards.decorator';
 import { Prisma, Role } from '@prisma/client';
 import { User } from '@common/decorators/user.decorator';
-import { CreateUpdateQuizDto as CreateUpdateQuizBankDto } from '@modules/quiz/dto/create-update.dto';
+import { UpdateQuizDto as CreateUpdateQuizBankDto } from '@modules/quiz/dto/create-update.dto';
 import { QuizEntity as QuizBankEntity } from '@modules/quiz/entity/quiz.entity';
 import { UseRoleGuards } from '@common/decorators/use-role-guards.decorator';
 import { CreateQuizBankDto } from './dto/create.dto';
