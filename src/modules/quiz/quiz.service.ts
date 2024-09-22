@@ -7,7 +7,7 @@ import { FileService } from '@modules/file/file.service';
 import { LangchainService } from './langchain/langchain.service';
 import { ReferRepository } from '@modules/refer/refer.repository';
 import {
-  CreateUpdateQuizDto,
+  UpdateQuizDto,
   QuizContent,
 } from './dto/create-update.dto';
 import { QuizEntity } from './entity/quiz.entity';
@@ -59,7 +59,7 @@ export class QuizService {
    * @param m_id - マテリアルID
    * @returns - クイズ
    */
-  async getQuizByLLM(m_id: bigint) {
+  async getQuizzesByLLM(m_id: bigint) {
     const [refers, filePathResult] = await Promise.all([
       this.getRefers(m_id),
       this.quizRepository.getFilePath(m_id),
@@ -76,16 +76,22 @@ export class QuizService {
     const document =
       await this.langchainService.getDocument(file);
 
-    const pageNumbers = await this.getPageNumbers(
-      document,
-      refers,
-    );
+    let contents;
 
-    const pages = this.getPages(document, pageNumbers);
+    if (!refers || refers.length === 0) {
+      contents = document.map((doc) => doc).join('\n\n');
+    } else {
+      // refers가 있을 경우 refers를 이용하여 퀴즈 생성
+      const pageNumbers = await this.getPageNumbers(
+        document,
+        refers,
+      );
 
-    const contents = pages.map((doc) => doc).join('\n\n');
+      const pages = this.getPages(document, pageNumbers);
+      contents = pages.map((doc) => doc).join('\n\n');
+    }
 
-    return await this.langchainService.getQuiz(contents);
+    return await this.langchainService.getQuizzes(contents);
   }
 
   /**
@@ -172,7 +178,7 @@ export class QuizService {
    * @param content - クイズの内容
    * @returns - 更新されたクイズ
    */
-  async update(id: bigint, content: CreateUpdateQuizDto) {
+  async update(id: bigint, content: UpdateQuizDto) {
     const quiz = await this.quizRepository.update(
       id,
       JSON.stringify(content.content),
@@ -208,11 +214,12 @@ export class QuizService {
    * @param content - クイズの内容
    * @returns - 作成されたクイズ
    */
-  async create(m_id: bigint, content: QuizContent) {
-    await this.quizRepository.create(
+  async create(m_id: bigint, content: QuizContent[]) {
+    const contents = content.map((quiz) => ({
       m_id,
-      JSON.stringify(content),
-    );
+      content: JSON.stringify(quiz),
+    }));
+    await this.quizRepository.create(contents);
     return 'Quiz created successfully';
   }
 
