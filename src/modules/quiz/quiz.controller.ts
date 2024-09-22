@@ -16,7 +16,11 @@ import {
 import { Role } from '@prisma/client';
 import { QuizService } from './quiz.service';
 import { ApiDefaultMetadata } from '@common/decorators/api-default.decorator';
-import { CreateUpdateQuizDto } from './dto/create-update.dto';
+import {
+  CreateQuizzesDto,
+  QuizContent,
+  UpdateQuizDto,
+} from './dto/create-update.dto';
 import { QuizEntity } from './entity/quiz.entity';
 
 @ApiDefaultMetadata('Quizzes')
@@ -51,7 +55,7 @@ export class QuizController {
   @Post('material/:m_id')
   create(
     @Param('m_id', BigIntPipe) m_id: bigint,
-    @Body() body: CreateUpdateQuizDto,
+    @Body() body: CreateQuizzesDto,
   ) {
     return this.quizService.create(m_id, body.content);
   }
@@ -60,12 +64,13 @@ export class QuizController {
     HttpStatus.OK,
     'クイズ取得',
     'クイズ取得に成功しました。',
-    CreateUpdateQuizDto,
+    QuizContent,
+    true,
   )
   @UseRoleGuards([Role.ADMIN])
-  @Get('material/:m_id/get-quiz')
-  getQuizByLLM(@Param('m_id', BigIntPipe) m_id: bigint) {
-    return this.quizService.getQuizByLLM(m_id);
+  @Get('material/:m_id/recommend-quizzes')
+  getQuizzesByLLM(@Param('m_id', BigIntPipe) m_id: bigint) {
+    return this.quizService.getQuizzesByLLM(m_id);
   }
 
   @ApiResponseWithBody(
@@ -77,7 +82,7 @@ export class QuizController {
   @Patch(':q_id')
   update(
     @Param('q_id', BigIntPipe) q_id: bigint,
-    @Body() content: CreateUpdateQuizDto,
+    @Body() content: UpdateQuizDto,
   ) {
     return this.quizService.update(q_id, content);
   }
