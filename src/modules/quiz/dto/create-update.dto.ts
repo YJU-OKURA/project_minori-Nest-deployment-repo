@@ -1,4 +1,5 @@
 import {
+  ArrayMaxSize,
   ArrayNotEmpty,
   IsNotEmpty,
   IsString,
@@ -74,6 +75,7 @@ export class QuizContent {
 
 export class CreateQuizzesDto {
   @ArrayNotEmpty()
+  @ArrayMaxSize(5)
   @Type(() => QuizContent)
   @ValidateNested()
   @ApiProperty({
