@@ -188,8 +188,8 @@ describe('QuizController', () => {
       limit,
     );
 
-    // expect(result).toBeDefined();
-    // expect(result).toHaveLength(2);
+    expect(result).toBeDefined();
+    expect(result).toHaveLength(2);
     expect(result).toEqual([
       {
         id: 1,
@@ -224,22 +224,6 @@ describe('QuizController', () => {
         },
       },
     ]);
-    // expect(result[1]).toEqual({
-    //   id: 2,
-    //   content: {
-    //     question: 'test2',
-    //     answer: {
-    //       a: 'test2',
-    //       b: 'test2',
-    //       c: 'test2',
-    //       d: 'test2',
-    //     },
-    //     commentary: {
-    //       correctAnswer: 'b',
-    //       content: 'test',
-    //     },
-    //   },
-    // });
   });
 
   it('should throw an error if required parameters are missing', async () => {
