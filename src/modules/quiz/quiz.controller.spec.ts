@@ -3,8 +3,8 @@ import { QuizController } from './quiz.controller';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { QuizService } from './quiz.service';
 import {
-  CreateUpdateQuizDto,
-  QuizContent,
+  CreateQuizzesDto,
+  UpdateQuizDto as CreateUpdateQuizDto,
 } from './dto/create-update.dto';
 import { ClassUserModule } from '@modules/class-user/class-user.module';
 
@@ -59,7 +59,7 @@ describe('QuizController', () => {
       create: jest
         .fn()
         .mockImplementation(
-          (m_id: bigint, content: QuizContent) => {
+          (m_id: bigint, content: CreateQuizzesDto) => {
             if (!m_id || !content) {
               return Promise.reject(new Error('Error'));
             }
@@ -68,27 +68,28 @@ describe('QuizController', () => {
             );
           },
         ),
-      getQuizByLLM: jest
+      getQuizzesByLLM: jest
         .fn()
         .mockImplementation((m_id: bigint) => {
           if (!m_id) {
             return Promise.reject(new Error('Error'));
           }
           return Promise.resolve({
-            id: 1,
-            content: {
-              question: 'test1',
-              answer: {
-                a: 'test1',
-                b: 'test1',
-                c: 'test1',
-                d: 'test1',
+            quizzes: [
+              {
+                question: 'test1',
+                answer: {
+                  a: 'test1',
+                  b: 'test1',
+                  c: 'test1',
+                  d: 'test1',
+                },
+                commentary: {
+                  correctAnswer: 'a',
+                  content: 'test',
+                },
               },
-              commentary: {
-                correctAnswer: 'a',
-                content: 'test',
-              },
-            },
+            ],
           });
         }),
       update: jest
@@ -143,20 +144,22 @@ describe('QuizController', () => {
 
   it('should create a quiz successfully', async () => {
     const m_id: bigint = BigInt(1);
-    const quizContent: CreateUpdateQuizDto = {
-      content: {
-        question: '새로운 퀴즈의 질문',
-        answer: {
-          a: '답변 a',
-          b: '답변 b',
-          c: '답변 c',
-          d: '답변 d',
+    const quizContent: CreateQuizzesDto = {
+      content: [
+        {
+          question: '새로운 퀴즈의 질문',
+          answer: {
+            a: '답변 a',
+            b: '답변 b',
+            c: '답변 c',
+            d: '답변 d',
+          },
+          commentary: {
+            correctAnswer: 'a',
+            content: '해설 내용',
+          },
         },
-        commentary: {
-          correctAnswer: 'a',
-          content: '해설 내용',
-        },
-      },
+      ],
     };
 
     const result = await controller.create(
@@ -170,7 +173,7 @@ describe('QuizController', () => {
 
   it('should throw an error if required parameters are missing', async () => {
     await expect(
-      controller.create(BigInt(0), null),
+      controller.create(BigInt(0), { content: null }),
     ).rejects.toThrow('Error');
   });
 
@@ -187,38 +190,40 @@ describe('QuizController', () => {
 
     expect(result).toBeDefined();
     expect(result).toHaveLength(2);
-    expect(result[0]).toEqual({
-      id: 1,
-      content: {
-        question: 'test1',
-        answer: {
-          a: 'test1',
-          b: 'test1',
-          c: 'test1',
-          d: 'test1',
-        },
-        commentary: {
-          correctAnswer: 'a',
-          content: 'test',
-        },
-      },
-    });
-    expect(result[1]).toEqual({
-      id: 2,
-      content: {
-        question: 'test2',
-        answer: {
-          a: 'test2',
-          b: 'test2',
-          c: 'test2',
-          d: 'test2',
-        },
-        commentary: {
-          correctAnswer: 'b',
-          content: 'test',
+    expect(result).toEqual([
+      {
+        id: 1,
+        content: {
+          question: 'test1',
+          answer: {
+            a: 'test1',
+            b: 'test1',
+            c: 'test1',
+            d: 'test1',
+          },
+          commentary: {
+            correctAnswer: 'a',
+            content: 'test',
+          },
         },
       },
-    });
+      {
+        id: 2,
+        content: {
+          question: 'test2',
+          answer: {
+            a: 'test2',
+            b: 'test2',
+            c: 'test2',
+            d: 'test2',
+          },
+          commentary: {
+            correctAnswer: 'b',
+            content: 'test',
+          },
+        },
+      },
+    ]);
   });
 
   it('should throw an error if required parameters are missing', async () => {
@@ -230,30 +235,31 @@ describe('QuizController', () => {
   it('should get quiz by material id successfully', async () => {
     const m_id: bigint = BigInt(1);
 
-    const result = await controller.getQuizByLLM(m_id);
+    const result = await controller.getQuizzesByLLM(m_id);
 
     expect(result).toBeDefined();
     expect(result).toEqual({
-      id: 1,
-      content: {
-        question: 'test1',
-        answer: {
-          a: 'test1',
-          b: 'test1',
-          c: 'test1',
-          d: 'test1',
+      quizzes: [
+        {
+          question: 'test1',
+          answer: {
+            a: 'test1',
+            b: 'test1',
+            c: 'test1',
+            d: 'test1',
+          },
+          commentary: {
+            correctAnswer: 'a',
+            content: 'test',
+          },
         },
-        commentary: {
-          correctAnswer: 'a',
-          content: 'test',
-        },
-      },
+      ],
     });
   });
 
   it('should throw an error if required parameters are missing', async () => {
     await expect(
-      controller.getQuizByLLM(BigInt(0)),
+      controller.getQuizzesByLLM(BigInt(0)),
     ).rejects.toThrow('Error');
   });
 

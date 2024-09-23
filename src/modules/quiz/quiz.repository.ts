@@ -34,12 +34,9 @@ export class QuizRepository {
     });
   }
 
-  create(m_id: bigint, content: Prisma.JsonValue) {
-    return this.prisma.quiz.create({
-      data: {
-        m_id,
-        content,
-      },
+  create(content: Prisma.QuizCreateManyInput[]) {
+    return this.prisma.quiz.createMany({
+      data: content,
     });
   }
 
