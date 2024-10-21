@@ -13,6 +13,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { MAX_QUIZ_DATA_SIZE } from './create.dto';
+import { Answer } from '@prisma/client';
 
 @ValidatorConstraint({ async: true })
 class IsQuizResultArrayConstraint {
@@ -20,8 +21,9 @@ class IsQuizResultArrayConstraint {
     if (!Array.isArray(value)) return false;
     return value.every(
       (v) =>
-        typeof v.q_id === 'bigint' &&
-        typeof v.result === 'boolean',
+        typeof v?.q_id === 'bigint' &&
+        typeof v?.result === 'boolean' &&
+        Object.values(Answer).includes(v?.answer),
     );
   }
 
@@ -65,6 +67,12 @@ export class QuizResult {
     example: true,
   })
   result: boolean;
+
+  @IsNotEmpty()
+  @ApiProperty({
+    example: Answer.a,
+  })
+  answer: Answer;
 }
 
 export class MarkSetQuizDto {
@@ -86,6 +94,7 @@ export class MarkSetQuizDto {
       {
         q_id: 1,
         result: true,
+        answer: Answer.a,
       },
     ],
   })
