@@ -351,6 +351,7 @@ export class SetQuizService {
           question,
         },
         result: r.result,
+        answer: r.answer,
       };
     });
 
