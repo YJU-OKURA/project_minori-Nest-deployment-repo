@@ -73,6 +73,7 @@ export class SetQuizRepository {
       },
       select: {
         result: true,
+        answer: true,
         class_user: {
           select: {
             u_id: true,
@@ -95,6 +96,7 @@ export class SetQuizRepository {
       },
       select: {
         result: true,
+        answer: true,
         class_user: {
           select: {
             u_id: true,
@@ -155,6 +157,7 @@ export class SetQuizRepository {
       },
       select: {
         result: true,
+        answer: true,
         q_id: true,
         quizList: {
           select: {

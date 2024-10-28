@@ -142,10 +142,18 @@ model Quiz {
   @@map("quizzes")
 }
 
+enum Answer {
+  a
+  b
+  c
+  d
+}
+
 model ClassUserQuiz {
   result      Boolean?
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
+  answer      Answer
 
   u_id        BigInt        @map("uid")
   c_id        BigInt        @map("cid")

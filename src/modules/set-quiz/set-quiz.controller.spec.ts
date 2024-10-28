@@ -229,6 +229,7 @@ describe('SetQuizController', () => {
         {
           q_id: BigInt(1),
           result: true,
+          answer: 'a',
         },
       ],
     });

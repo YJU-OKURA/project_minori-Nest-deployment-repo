@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Answer } from '@prisma/client';
 
 class QuizContent {
   @ApiProperty({
@@ -18,6 +19,9 @@ class QuizResult {
 
   @ApiProperty()
   result: boolean;
+
+  @ApiProperty()
+  answer: Answer;
 }
 
 export class QuizResultEntity {
@@ -34,6 +38,7 @@ export class QuizResultEntity {
           question: 'What is the capital of Japan?',
         },
         result: true,
+        answer: Answer.a,
       },
     ],
   })
